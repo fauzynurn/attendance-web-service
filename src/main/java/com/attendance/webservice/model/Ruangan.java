@@ -12,55 +12,54 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ruang")
-public class Ruang {
+@Table(name="ruangan")
+public class Ruangan {
 	@Id
-	@Column(name="KODE_RUANG")
+	@Column(name="KODE_RUANGAN")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)	
-	private String kdRuang;
+	private String kdRuangan;
 	
-	@Column(name="NAMA_RUANG")
-	private String namaRuang;
+	@Column(name="NAMA_RUANGAN")
+	private String namaRuangan;
 	
-	@Column(name="BEACON")
-	private String beacon;
+	@Column(name="MAC_ADDRESS")
+	private String macAddress;
 	
-	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="ruang", orphanRemoval=false, fetch=FetchType.LAZY)
+	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="ruangan", orphanRemoval=false, fetch=FetchType.LAZY)
 	private Set<JadwalKuliah> jdwlKuliah;
 	
-	public Ruang() {
+	public Ruangan() {
 		
 	}
 	
-	public Ruang(String kdRuang, String namaRuang, String beacon) {
+	public Ruangan(String kdRuangan, String namaRuangan, String macAddress) {
 		super();
-		this.kdRuang = kdRuang;
-		this.namaRuang = namaRuang;
-		this.beacon = beacon;
+		this.kdRuangan = kdRuangan;
+		this.namaRuangan = namaRuangan;
+		this.macAddress = macAddress;
 	}
 	
-	public String getKdRuang() {
-		return kdRuang;
+	public String getKdRuangan() {
+		return kdRuangan;
 	}
 	
-	public void setKdRuang(String kdRuang) {
-		this.kdRuang = kdRuang;
+	public void setKdRuangan(String kdRuangan) {
+		this.kdRuangan = kdRuangan;
 	}
 	
-	public String getNamaRuang() {
-		return namaRuang;
+	public String getNamaRuangan() {
+		return namaRuangan;
 	}
 	
-	public void setNamaRuang(String namaRuang) {
-		this.namaRuang = namaRuang;
+	public void setNamaRuangan(String namaRuangan) {
+		this.namaRuangan = namaRuangan;
 	}
 	
-	public String getBeacon() {
-		return beacon;
+	public String getMacAddress() {
+		return macAddress;
 	}
 	
-	public void setBeacon(String beacon) {
-		this.beacon = beacon;
+	public void setMacAddress(String macAddress) {
+		this.macAddress = macAddress;
 	}
-
 }

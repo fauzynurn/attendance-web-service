@@ -22,8 +22,8 @@ public class Matakuliah {
 	@Column(name="KODE_MATKUL")
 	private String kdMatkul;
 	
-	@Column(name="TEORI_PRAKTIK")
-	private boolean tePr;
+	@Column(name="JENIS_MATKUL")
+	private boolean jenisMatkul;
 	
 	@Column(name="NAMA_MATKUL")
 	private String namaMatkul;
@@ -35,11 +35,11 @@ public class Matakuliah {
 		
 	}
 	
-	public Matakuliah(int idMatkul, String kdMatkul, boolean tePr, String namaMatkul) {
+	public Matakuliah(int idMatkul, String kdMatkul, boolean jenisMatkul, String namaMatkul) {
 		super();
 		this.idMatkul = idMatkul;
 		this.kdMatkul = kdMatkul;
-		this.tePr = tePr;
+		this.jenisMatkul = jenisMatkul;
 		this.namaMatkul = namaMatkul;
 	}
 	
@@ -59,12 +59,12 @@ public class Matakuliah {
 		this.kdMatkul = kdMatkul;
 	}
 	
-	public boolean getTePr() {
-		return tePr;
+	public boolean getJenisMatkul() {
+		return jenisMatkul;
 	}
 	
-	public void setTePr(boolean tePr) {
-		this.tePr = tePr;
+	public void setJenisMatkul(boolean jenisMatkul) {
+		this.jenisMatkul = jenisMatkul;
 	}
 		
 	public String getNamaMatkul() {

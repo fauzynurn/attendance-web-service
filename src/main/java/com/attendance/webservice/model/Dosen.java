@@ -19,11 +19,11 @@ public class Dosen {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)	
 	private String kdDosen;
 	
-	@Column(name="PASSWORD_DOSEN")
-	private String pwdDosen;
-	
 	@Column(name="NAMA_DOSEN")
 	private String namaDosen;
+	
+	@Column(name="PASSWORD_DOSEN")
+	private String pwdDosen;
 	
 	@Column(name="IMEI_DOSEN")
 	private String imeiDosen;
@@ -38,11 +38,11 @@ public class Dosen {
 		
 	}
 	
-	public Dosen(String kdDosen, String pwdDosen, String namaDosen, String imeiDosen, String pubKeyDosen) {
+	public Dosen(String kdDosen, String namaDosen, String pwdDosen, String imeiDosen, String pubKeyDosen) {
 		super();
 		this.kdDosen = kdDosen;
-		this.pwdDosen = pwdDosen;
 		this.namaDosen = namaDosen;
+		this.pwdDosen = pwdDosen;
 		this.imeiDosen = imeiDosen;
 		this.pubKeyDosen = pubKeyDosen;
 	}
@@ -63,12 +63,12 @@ public class Dosen {
 		this.namaDosen = namaDosen;
 	}
 	
-	public String getPubKeyDosen() {
-		return pubKeyDosen;
+	public String getPwdDosen() {
+		return pwdDosen;
 	}
 	
-	public void setPubKeyDosen(String pubKeyDosen) {
-		this.pubKeyDosen = pubKeyDosen;
+	public void setPwdDosen(String pwdDosen) {
+		this.pwdDosen = pwdDosen;
 	}
 	
 	public String getImeiDosen() {
@@ -79,11 +79,11 @@ public class Dosen {
 		this.imeiDosen = imeiDosen;
 	}
 	
-	public String getPwdDosen() {
-		return pwdDosen;
+	public String getPubKeyDosen() {
+		return pubKeyDosen;
 	}
 	
-	public void setPwdDosen(String pwdDosen) {
-		this.pwdDosen = pwdDosen;
+	public void setPubKeyDosen(String pubKeyDosen) {
+		this.pubKeyDosen = pubKeyDosen;
 	}
 }
