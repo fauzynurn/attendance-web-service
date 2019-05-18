@@ -32,10 +32,10 @@ public class MahasiswaController {
     	} else {
     		if(mhs.getPwdMhs().equals(request.get("password"))) {
     			if(mhs.getImeiMhs() != null) {
-    				if(mhs.getImeiMhs().equals(request.get("imei"))){
+    				if(mhs.getImeiMhs().equals(request.get("imei"))) {
 						map.put("status", "200");
 						map.put("message", "Imei match");
-					}else {
+					} else {
 						map.put("status", "200");
 						map.put("message", "User is active");
 					}
@@ -52,22 +52,22 @@ public class MahasiswaController {
 	}
 
 //	@PostMapping("/handlevalidate")
-//	public Map<String,String> testingPurposeOnly(@RequestBody HashMap<String,String> req){
+//	public Map<String, String> testingPurposeOnly(@RequestBody HashMap<String, String> req){
 //		HashMap<String, String> map = new HashMap<>();
-//		if(req.get("nim").equals("161511049")){
-//			map.put("status","200");
+//		if(req.get("nim").equals("161511049")) {
+//			map.put("status", "200");
 //			map.put("message", "User is not active");
 //			return map;
 //		}
-//		map.put("status","200");
+//		map.put("status", "200");
 //		map.put("message", "User is active");
 //		return map;
 //	}
-
+//
 //	@PostMapping("/handleregister")
-//	public Map<String,String> testingPurposeOnly1(@RequestBody HashMap<String,String> req){
+//	public Map<String, String> testingPurposeOnly1(@RequestBody HashMap<String, String> req) {
 //		HashMap<String, String> map = new HashMap<>();
-//			map.put("status","200");
+//			map.put("status", "200");
 //			map.put("message", "3B");
 //			return map;
 //	}
@@ -79,7 +79,7 @@ public class MahasiswaController {
         mhs.setPubKeyMhs(request.get("publicKey"));
         mhs.setImeiMhs(request.get("imei"));
         mhsService.saveMhs(mhs);
-        map.put("status","200");
+        map.put("status", "200");
         map.put("message", mhs.getKelas().getKdKelas());
         return map;
 	}

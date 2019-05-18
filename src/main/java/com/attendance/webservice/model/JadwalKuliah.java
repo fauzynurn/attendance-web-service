@@ -59,11 +59,6 @@ public class JadwalKuliah {
 		
 	}
 	
-	public JadwalKuliah(int idJadwal) {
-		super();
-		this.idJadwal = idJadwal;
-	}
-	
 	public JadwalKuliah(int idJadwal, Kelas kelas, String hari, Matakuliah matkul, Dosen dosen, Jam jam, Ruangan ruangan) {
 		super();
 		this.idJadwal = idJadwal;
