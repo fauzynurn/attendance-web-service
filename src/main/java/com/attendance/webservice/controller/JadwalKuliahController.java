@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.webservice.service.JadwalKuliahService;
-import com.attendance.webservice.model.JadwalKuliah;
 
 @RestController
 public class JadwalKuliahController {
@@ -17,8 +16,7 @@ public class JadwalKuliahController {
 	JadwalKuliahService jdwlKuliahService;
 	
 	@GetMapping("/getjadwal")
-	public List<JadwalKuliah> getJdwlKelas(@RequestBody HashMap<String, String> request) {
-		List<JadwalKuliah> jdwlKuliah = jdwlKuliahService.fetchJdwlKuliahDataInnerJoin(request.get("kdKelas"));
-		return jdwlKuliah;
+	public List getJdwlKelas(@RequestBody HashMap<String, String> request) {
+		return jdwlKuliahService.fetchJdwlKuliahDataInnerJoin(request.get("kdKelas"));
 	}
 }

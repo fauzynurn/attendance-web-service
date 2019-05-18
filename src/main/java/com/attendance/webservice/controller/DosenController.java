@@ -39,7 +39,7 @@ public class DosenController {
 		}
         return map;
 	}
-	
+
 	@PostMapping("/registerdosen")
 	public Map<String, String> registerDosen(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
