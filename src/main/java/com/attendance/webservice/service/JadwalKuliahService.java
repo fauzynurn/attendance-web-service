@@ -13,7 +13,7 @@ public class JadwalKuliahService {
 	@Autowired
 	JadwalKuliahRepository jdwlKuliahRepository;
 	
-	public List fetchJdwlKuliahDataInnerJoin(String kdKelas) {
-		return jdwlKuliahRepository.fetchJdwlKuliahDataInnerJoin(kdKelas);
+	public List fetchJdwlKuliahDataInnerJoin(String kdKelas, String hari) {
+		return jdwlKuliahRepository.fetchJdwlKuliahDataInnerJoin(kdKelas, hari);
 	}
 }

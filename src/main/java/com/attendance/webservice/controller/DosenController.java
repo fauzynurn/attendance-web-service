@@ -47,7 +47,6 @@ public class DosenController {
         dsn.setPubKeyDosen(request.get("publicKey"));
         dsn.setImeiDosen(request.get("imei"));
         dsnService.saveDsn(dsn);
-        
         map.put("status","200");
         map.put("message", "Success");
         return map;

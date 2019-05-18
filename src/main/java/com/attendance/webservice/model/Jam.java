@@ -13,31 +13,31 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="sesi")
-public class Sesi {
+@Table(name="jam")
+public class Jam {
 	@Id
 	@Column(name="JAM_KE")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private String jamKe;
 	
-	@Column(name="WAKTU_MULAI")
-	private Time wktMulai;
+	@Column(name="JAM_MULAI")
+	private Time jamMulai;
 	
-	@Column(name="WAKTU_SELESAI")
-	private Time wktSelesai;
+	@Column(name="JAM_SELESAI")
+	private Time jamSelesai;
 	
-	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="sesi", orphanRemoval=false, fetch=FetchType.LAZY)
+	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="jam", orphanRemoval=false, fetch=FetchType.LAZY)
 	private Set<JadwalKuliah> jdwlKuliah;
 	
-	public Sesi() {
+	public Jam() {
 		
 	}
 	
-	public Sesi(String jamKe, Time wktMulai, Time wktSelesai) {
+	public Jam(String jamKe, Time jamMulai, Time jamSelesai) {
 		super();
 		this.jamKe = jamKe;
-		this.wktMulai = wktMulai;
-		this.wktSelesai = wktSelesai;
+		this.jamMulai = jamMulai;
+		this.jamSelesai = jamSelesai;
 	}
 	
 	public String getJamKe() {
@@ -48,19 +48,19 @@ public class Sesi {
 		this.jamKe = jamKe;
 	}
 	
-	public Time getWktMulai() {
-		return wktMulai;
+	public Time getJamMulai() {
+		return jamMulai;
 	}
 	
-	public void setWktMulai(Time wktMulai) {
-		this.wktMulai = wktMulai;
+	public void setJamMulai(Time jamMulai) {
+		this.jamMulai = jamMulai;
 	}
 		
-	public Time getWktSelesai() {
-		return wktSelesai;
+	public Time getJamSelesai() {
+		return jamSelesai;
 	}
 	
-	public void setWktSelesai(Time wktSelesai) {
-		this.wktSelesai = wktSelesai;
+	public void setJamSelesai(Time jamSelesai) {
+		this.jamSelesai = jamSelesai;
 	}
 }

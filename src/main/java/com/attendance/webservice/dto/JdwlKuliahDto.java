@@ -4,47 +4,25 @@ import java.util.Date;
 
 public class JdwlKuliahDto {
 	
-	private String kdKelas;
 	private String namaMatkul;
-	private boolean tePr;
-	private String jamKe;
-	private Date wktMulai;
-	private Date wktSelesai;
-	private String kdRuang;
-	private String namaDosen;
-	private String hari;
+	private boolean jenisMatkul;
+	private Date jamMulai;
+	private Date jamSelesai;
+	private String kodeRuangan;
+	private String macAddress;
 	
 	public JdwlKuliahDto() {
 		
 	}
-
-	public JdwlKuliahDto(String kdKelas, String hari, String namaMatkul, boolean tePr, String jamKe, Date wktMulai,
-			Date wktSelesai, String namaDosen, String kdRuang) {
-		this.kdKelas = kdKelas;
+	
+	public JdwlKuliahDto(String namaMatkul, boolean jenisMatkul, Date jamMulai, Date jamSelesai, String kodeRuangan,
+			String macAddress) {
 		this.namaMatkul = namaMatkul;
-		this.jamKe = jamKe;
-		this.tePr = tePr;
-		this.wktMulai = wktMulai;
-		this.wktSelesai = wktSelesai;
-		this.namaDosen = namaDosen;
-		this.hari = hari;
-		this.kdRuang = kdRuang;
-	}
-	
-	public String getJamKe() {
-		return jamKe;
-	}
-	
-	public void setJamKe(String jamKe) {
-		this.jamKe = jamKe;
-	}
-	
-	public boolean getTePr() {
-		return tePr;
-	}
-	
-	public void setTePr(boolean tePr) {
-		this.tePr = tePr;
+		this.jenisMatkul = jenisMatkul;
+		this.jamMulai = jamMulai;
+		this.jamSelesai = jamSelesai;
+		this.kodeRuangan = kodeRuangan;
+		this.macAddress = macAddress;
 	}
 	
 	public String getNamaMatkul() {
@@ -55,51 +33,44 @@ public class JdwlKuliahDto {
 		this.namaMatkul = namaMatkul;
 	}
 	
-	public Date getWktMulai() {
-		return wktMulai;
+	public boolean getJenisMatkul() {
+		return jenisMatkul;
 	}
 	
-	public void setWktMulai(Date wktMulai) {
-		this.wktMulai = wktMulai;
+	public void setJenisMatkul(boolean jenisMatkul) {
+		this.jenisMatkul = jenisMatkul;
+	}
+	
+	public Date getJamMulai() {
+		return jamMulai;
+	}
+	
+	public void setJamMulai(Date jamMulai) {
+		this.jamMulai = jamMulai;
 	}
 		
-	public Date getWktSelesai() {
-		return wktSelesai;
+	public Date getJamSelesai() {
+		return jamSelesai;
 	}
 	
-	public void setWktSelesai(Date wktSelesai) {
-		this.wktSelesai = wktSelesai;
+	public void setJamSelesai(Date jamSelesai) {
+		this.jamSelesai = jamSelesai;
 	}
 	
-	public String getKdKelas() {
-		return kdKelas;
+		
+	public String getKodeRuangan() {
+		return kodeRuangan;
 	}
 	
-	public void setKdKelas(String kdKelas) {
-		this.kdKelas = kdKelas;
+	public void setKodeRuangan(String kodeRuangan) {
+		this.kodeRuangan = kodeRuangan;
 	}
 	
-	public String getKdRuang() {
-		return kdRuang;
+	public String getMacAddress() {
+		return macAddress;
 	}
 	
-	public void setKdRuang(String kdRuang) {
-		this.kdRuang = kdRuang;
-	}
-	
-	public String getNamaDosen() {
-		return namaDosen;
-	}
-	
-	public void setNamaDosen(String namaDosen) {
-		this.namaDosen = namaDosen;
-	}
-	
-	public String getHari() {
-		return hari;
-	}
-	
-	public void setHari(String hari) {
-		this.hari = hari;
+	public void setMacAddress(String macAddress) {
+		this.macAddress = macAddress;
 	}
 }
