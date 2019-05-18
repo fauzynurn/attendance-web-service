@@ -13,7 +13,7 @@ import com.attendance.webservice.model.BeritaAcara;
 public interface BeritaAcaraRepository extends JpaRepository<BeritaAcara, Serializable> {
 	BeritaAcara save(BeritaAcara berita);
 	
-	@Query("SELECT jk.idJadwal FROM JadwalKuliah jk INNER JOIN jk.matkul mk " +
-	"INNER JOIN jk.kelas k WHERE mk.kdMatkul = ?1 AND k.kdKelas = ?2 AND jk.hari = ?3")
-	List fetchIdJadwalDataInnerJoin(String kdMatkul, String kdKelas, String hari);
+	@Query("SELECT jk.idJadwal FROM JadwalKuliah jk INNER JOIN jk.matkul mk INNER JOIN jk.kelas k WHERE mk.namaMatkul = ?1 AND " +
+			"k.kdKelas = ?2 AND jk.hari = ?3")
+	List fetchIdJadwalDataInnerJoin(String namaMatkul, String kdKelas, String hari);
 }

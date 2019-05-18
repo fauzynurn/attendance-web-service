@@ -17,7 +17,7 @@ public class BeritaAcaraService {
 		return beritaRepository.save(berita);
 	}
 	
-	public List fetchIdJadwalDataInnerJoin(String kdMatkul, String kdKelas, String hari) {
-		return beritaRepository.fetchIdJadwalDataInnerJoin(kdMatkul, kdKelas, hari);
+	public List fetchIdJadwalDataInnerJoin(String namaMatkul, String kdKelas, String hari) {
+		return beritaRepository.fetchIdJadwalDataInnerJoin(namaMatkul, kdKelas, hari);
 	}
 }

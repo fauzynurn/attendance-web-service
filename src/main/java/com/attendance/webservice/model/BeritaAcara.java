@@ -45,7 +45,7 @@ public class BeritaAcara {
 	private boolean parafKaprod;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ID_JADWAL", insertable=false, updatable=false)
+	@JoinColumn(name="ID_JADWAL")
 	@Fetch(FetchMode.JOIN)
 	private JadwalKuliah jdwlKuliah;
 	
