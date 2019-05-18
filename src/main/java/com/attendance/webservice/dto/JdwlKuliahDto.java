@@ -6,6 +6,7 @@ public class JdwlKuliahDto {
 	
 	private String namaMatkul;
 	private boolean jenisMatkul;
+	private String namaDosen;
 	private Date jamMulai;
 	private Date jamSelesai;
 	private String kodeRuangan;
@@ -15,10 +16,11 @@ public class JdwlKuliahDto {
 		
 	}
 	
-	public JdwlKuliahDto(String namaMatkul, boolean jenisMatkul, Date jamMulai, Date jamSelesai, String kodeRuangan,
+	public JdwlKuliahDto(String namaMatkul, boolean jenisMatkul, String namaDosen, Date jamMulai, Date jamSelesai, String kodeRuangan,
 			String macAddress) {
 		this.namaMatkul = namaMatkul;
 		this.jenisMatkul = jenisMatkul;
+		this.namaDosen = namaDosen;
 		this.jamMulai = jamMulai;
 		this.jamSelesai = jamSelesai;
 		this.kodeRuangan = kodeRuangan;
@@ -39,6 +41,14 @@ public class JdwlKuliahDto {
 	
 	public void setJenisMatkul(boolean jenisMatkul) {
 		this.jenisMatkul = jenisMatkul;
+	}
+	
+	public String getNamaDosen() {
+		return namaDosen;
+	}
+	
+	public void setNamaDosen(String namaDosen) {
+		this.namaDosen = namaDosen;
 	}
 	
 	public Date getJamMulai() {
