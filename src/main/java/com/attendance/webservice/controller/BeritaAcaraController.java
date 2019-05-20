@@ -1,6 +1,7 @@
 package com.attendance.webservice.controller;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +27,14 @@ public class BeritaAcaraController {
 		List<BeritaAcara> berita = new ArrayList<>();
 		List idJadwal = beritaService.fetchIdJadwalDataInnerJoin(request.get("namaMatkul"), request.get("kdKelas"),
 				request.get("hari"));
-		Date now = new Date(System.currentTimeMillis());
+		Date date = new Date(System.currentTimeMillis());
+		Time time = new Time(System.currentTimeMillis());
+		String now = time.toString();
 
 		for(int i = 0; i < idJadwal.size(); i++) {
 			BeritaAcara brt = new BeritaAcara();
 			JadwalKuliah jdwl = new JadwalKuliah();
-			brt.setTglAbsensi(now);
+			brt.setTglAbsensi(date);
 			jdwl.setIdJadwal((int) idJadwal.get(i));
 			brt.setJadwalKuliah(jdwl);
 			berita.add(brt);
@@ -42,7 +45,7 @@ public class BeritaAcaraController {
 		}
 		
         map.put("status","200");
-        map.put("message", "Success");
+        map.put("message", now);
         return map;
 	}
 }
