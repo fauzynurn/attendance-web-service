@@ -4,11 +4,12 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -23,7 +24,7 @@ public class Dosen {
 	private String namaDosen;
 	
 	@Column(name="PASSWORD_DOSEN")
-	private String pwdDosen;
+	private String passwordDosen;
 	
 	@Column(name="IMEI_DOSEN")
 	private String imeiDosen;
@@ -31,18 +32,22 @@ public class Dosen {
 	@Column(name="PUBLIC_KEY_DOSEN")
 	private String pubKeyDosen;
 	
-	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="dosen", orphanRemoval=false, fetch=FetchType.LAZY)
-	private Set<JadwalKuliah> jdwlKuliah;
+	@ManyToMany
+	@JoinTable(
+		name="dosen_jadwal",
+		joinColumns=@JoinColumn(name="KODE_DOSEN"),
+		inverseJoinColumns=@JoinColumn(name="ID_JADWAL"))
+	Set<JadwalKuliah> jadwalKuliah;
 	
 	public Dosen() {
 		
 	}
 	
-	public Dosen(String kdDosen, String namaDosen, String pwdDosen, String imeiDosen, String pubKeyDosen) {
+	public Dosen(String kdDosen, String namaDosen, String passwordDosen, String imeiDosen, String pubKeyDosen) {
 		super();
 		this.kdDosen = kdDosen;
 		this.namaDosen = namaDosen;
-		this.pwdDosen = pwdDosen;
+		this.passwordDosen = passwordDosen;
 		this.imeiDosen = imeiDosen;
 		this.pubKeyDosen = pubKeyDosen;
 	}
@@ -63,12 +68,12 @@ public class Dosen {
 		this.namaDosen = namaDosen;
 	}
 	
-	public String getPwdDosen() {
-		return pwdDosen;
+	public String getPasswordDosen() {
+		return passwordDosen;
 	}
 	
-	public void setPwdDosen(String pwdDosen) {
-		this.pwdDosen = pwdDosen;
+	public void setPasswordDosen(String passwordDosen) {
+		this.passwordDosen = passwordDosen;
 	}
 	
 	public String getImeiDosen() {

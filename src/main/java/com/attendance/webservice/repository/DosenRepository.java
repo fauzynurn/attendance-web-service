@@ -9,6 +9,6 @@ import com.attendance.webservice.model.Dosen;
 
 @Repository("DosenRepository")
 public interface DosenRepository extends JpaRepository<Dosen, Serializable> {
-	Dosen findByKdDosen(String kdDsn);
-	Dosen save(Dosen dsn);
+	Dosen findByKdDosen(String kdDosen);
+	Dosen save(Dosen dosen);
 }

@@ -21,10 +21,11 @@ public class BeritaAcaraController {
 	BeritaAcaraService beritaService;
 	
 	@PostMapping("/aktifabsensi")
-	public Map<String, String> aktifAbsensi(@RequestBody HashMap<String, String> request) {
+	public Map<String, String> attendanceActive(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
 		List<BeritaAcara> berita = new ArrayList<>();
-		List idJadwal = beritaService.fetchIdJadwalDataInnerJoin(request.get("namaMatkul"), request.get("kdKelas"), request.get("hari"));
+		List idJadwal = beritaService.fetchIdJadwalDataInnerJoin(request.get("namaMatkul"), request.get("kdKelas"),
+				request.get("hari"));
 		Date now = new Date(System.currentTimeMillis());
 
 		for(int i = 0; i < idJadwal.size(); i++) {
@@ -32,12 +33,12 @@ public class BeritaAcaraController {
 			JadwalKuliah jdwl = new JadwalKuliah();
 			brt.setTglAbsensi(now);
 			jdwl.setIdJadwal((int) idJadwal.get(i));
-			brt.setJdwlKuliah(jdwl);
+			brt.setJadwalKuliah(jdwl);
 			berita.add(brt);
 		}
 		
 		for(int i = 0; i < berita.size(); i++) {
-			beritaService.saveBerita(berita.get(i));
+			beritaService.save(berita.get(i));
 		}
 		
         map.put("status","200");

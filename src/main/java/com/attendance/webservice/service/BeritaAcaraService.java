@@ -13,7 +13,7 @@ public class BeritaAcaraService {
 	@Autowired
 	BeritaAcaraRepository beritaRepository;
 	
-	public BeritaAcara saveBerita(BeritaAcara berita) {
+	public BeritaAcara save(BeritaAcara berita) {
 		return beritaRepository.save(berita);
 	}
 	

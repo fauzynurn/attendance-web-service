@@ -1,6 +1,7 @@
 package com.attendance.webservice.model;
 
 import java.sql.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -36,10 +38,10 @@ public class BeritaAcara {
 	private boolean parafDosen;
 	
 	@Column(name="PARAF_KETUA_KELAS")
-	private boolean parafKetuaKls;
+	private boolean parafKetuaKelas;
 	
 	@Column(name="PARAF_DOSEN_WALI")
-	private boolean parafDsnWali;
+	private boolean parafDosenWali;
 
 	@Column(name="PARAF_KAPROD")
 	private boolean parafKaprod;
@@ -47,23 +49,26 @@ public class BeritaAcara {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="ID_JADWAL")
 	@Fetch(FetchMode.JOIN)
-	private JadwalKuliah jdwlKuliah;
+	private JadwalKuliah jadwalKuliah;
+	
+	@OneToMany(targetEntity=Absensi.class, mappedBy="beritaAcara", orphanRemoval=false, fetch=FetchType.LAZY)
+	private Set<Absensi> absensi;
 	
 	public BeritaAcara() {
 		
 	}
 	
-	public BeritaAcara(Date tglAbsensi, String tatapMuka, String tgsTerstruktur, boolean parafDosen,
-			boolean parafKetuaKls, boolean parafDsnWali, boolean parafKaprod) {
+	public BeritaAcara(Date tglAbsensi, String tatapMuka, String tgsTerstruktur, boolean parafDosen, boolean parafKetuaKelas,
+			boolean parafDosenWali, boolean parafKaprod, JadwalKuliah jadwalKuliah) {
 		super();
 		this.tglAbsensi = tglAbsensi;
-		this.jdwlKuliah = new JadwalKuliah();
 		this.tatapMuka = tatapMuka;
 		this.tgsTerstruktur = tgsTerstruktur;
 		this.parafDosen = parafDosen;
-		this.parafKetuaKls = parafKetuaKls;
-		this.parafDsnWali = parafDsnWali;
+		this.parafKetuaKelas = parafKetuaKelas;
+		this.parafDosenWali = parafDosenWali;
 		this.parafKaprod = parafKaprod;
+		this.jadwalKuliah = jadwalKuliah;
 	}
 	
 	public int getIdBerita() {
@@ -80,14 +85,6 @@ public class BeritaAcara {
 	
 	public void setTglAbsensi(Date tglAbsensi) {
 		this.tglAbsensi = tglAbsensi;
-	}
-	
-	public JadwalKuliah getJdwlKuliah() {
-		return jdwlKuliah;
-	}
-	
-	public void setJdwlKuliah(JadwalKuliah jdwlKuliah) {
-		this.jdwlKuliah = jdwlKuliah;
 	}
 	
 	public String getTatapMuka() {
@@ -114,20 +111,20 @@ public class BeritaAcara {
 		this.parafDosen = parafDosen;
 	}
 	
-	public boolean getKetuaKls() {
-		return parafKetuaKls;
+	public boolean getKetuaKelas() {
+		return parafKetuaKelas;
 	}
 	
-	public void setParafKetuaKls(boolean parafKetuaKls) {
-		this.parafKetuaKls = parafKetuaKls;
+	public void setParafKetuaKelas(boolean parafKetuaKelas) {
+		this.parafKetuaKelas = parafKetuaKelas;
 	}
 	
-	public boolean getParafDsnWali() {
-		return parafDsnWali;
+	public boolean getParafDosenWali() {
+		return parafDosenWali;
 	}
 	
-	public void setParafDsnWali(boolean parafDsnWali) {
-		this.parafDsnWali = parafDsnWali;
+	public void setParafDosenWali(boolean parafDosenWali) {
+		this.parafDosenWali = parafDosenWali;
 	}
 	
 	public boolean getParafKaprod() {
@@ -136,5 +133,13 @@ public class BeritaAcara {
 	
 	public void setParafKaprod(boolean parafKaprod) {
 		this.parafKaprod = parafKaprod;
+	}
+	
+	public JadwalKuliah getJadwalKuliah() {
+		return jadwalKuliah;
+	}
+	
+	public void setJadwalKuliah(JadwalKuliah jadwalKuliah) {
+		this.jadwalKuliah = jadwalKuliah;
 	}
 }

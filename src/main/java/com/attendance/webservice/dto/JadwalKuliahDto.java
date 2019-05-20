@@ -2,7 +2,7 @@ package com.attendance.webservice.dto;
 
 import java.util.Date;
 
-public class JdwlKuliahDto {
+public class JadwalKuliahDto {
 	
 	private String namaMatkul;
 	private boolean jenisMatkul;
@@ -12,12 +12,12 @@ public class JdwlKuliahDto {
 	private String kodeRuangan;
 	private String macAddress;
 	
-	public JdwlKuliahDto() {
+	public JadwalKuliahDto() {
 		
 	}
 	
-	public JdwlKuliahDto(String namaMatkul, boolean jenisMatkul, String namaDosen, Date jamMulai, Date jamSelesai, String kodeRuangan,
-			String macAddress) {
+	public JadwalKuliahDto(String namaMatkul, boolean jenisMatkul, String namaDosen, Date jamMulai, Date jamSelesai,
+			String kodeRuangan, String macAddress) {
 		this.namaMatkul = namaMatkul;
 		this.jenisMatkul = jenisMatkul;
 		this.namaDosen = namaDosen;

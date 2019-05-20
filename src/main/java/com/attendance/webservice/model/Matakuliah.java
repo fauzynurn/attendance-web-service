@@ -29,15 +29,14 @@ public class Matakuliah {
 	private String namaMatkul;
 	
 	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="matkul", orphanRemoval=false, fetch=FetchType.LAZY)
-	private Set<JadwalKuliah> jdwlKuliah;
+	private Set<JadwalKuliah> jadwalKuliah;
 	
 	public Matakuliah() {
 		
 	}
 	
-	public Matakuliah(int idMatkul, String kdMatkul, boolean jenisMatkul, String namaMatkul) {
+	public Matakuliah(String kdMatkul, boolean jenisMatkul, String namaMatkul) {
 		super();
-		this.idMatkul = idMatkul;
 		this.kdMatkul = kdMatkul;
 		this.jenisMatkul = jenisMatkul;
 		this.namaMatkul = namaMatkul;

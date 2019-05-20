@@ -1,5 +1,7 @@
 package com.attendance.webservice.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -25,7 +28,7 @@ public class Mahasiswa {
 	private String namaMhs;
 	
 	@Column(name="PASSWORD_MHS")
-	private String pwdMhs;
+	private String passwordMhs;
 	
 	@Column(name="IMEI_MHS")
 	private String imeiMhs;
@@ -38,15 +41,18 @@ public class Mahasiswa {
 	@Fetch(FetchMode.JOIN)
 	private Kelas kelas;
 	
+	@OneToMany(targetEntity=Absensi.class, mappedBy="mhs", orphanRemoval=false, fetch=FetchType.LAZY)
+	private Set<Absensi> absensi;
+	
 	public Mahasiswa() {
 		
 	}
 	
-	public Mahasiswa(String nim, String namaMhs, String pwdMhs, String imeiMhs, String pubKeyMhs, Kelas kelas) {
+	public Mahasiswa(String nim, String namaMhs, String passwordMhs, String imeiMhs, String pubKeyMhs, Kelas kelas) {
 		super();
 		this.nim = nim;
 		this.namaMhs = namaMhs;
-		this.pwdMhs = pwdMhs;
+		this.passwordMhs = passwordMhs;
 		this.imeiMhs = imeiMhs;
 		this.pubKeyMhs = pubKeyMhs;
 		this.kelas = kelas;
@@ -68,12 +74,12 @@ public class Mahasiswa {
 		this.namaMhs = namaMhs;
 	}
 	
-	public String getPwdMhs() {
-		return pwdMhs;
+	public String getPasswordMhs() {
+		return passwordMhs;
 	}
 	
-	public void setPwdMhs(String pwdMhs) {
-		this.pwdMhs = pwdMhs;
+	public void setPasswordMhs(String passwordMhs) {
+		this.passwordMhs = passwordMhs;
 	}
 	
 	public String getImeiMhs() {

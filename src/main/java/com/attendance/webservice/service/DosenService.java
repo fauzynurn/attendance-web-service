@@ -9,13 +9,13 @@ import com.attendance.webservice.repository.DosenRepository;
 @Service
 public class DosenService {
 	@Autowired
-	DosenRepository dsnRepository;
+	DosenRepository dosenRepository;
 	
-	public Dosen findKdDosen(String kdDsn) {
-		return dsnRepository.findByKdDosen(kdDsn);
+	public Dosen findByKdDosen(String kdDosen) {
+		return dosenRepository.findByKdDosen(kdDosen);
 	}
 	
-	public Dosen saveDsn(Dosen dsn) {
-		return dsnRepository.save(dsn);
+	public Dosen save(Dosen dosen) {
+		return dosenRepository.save(dosen);
 	}
 }

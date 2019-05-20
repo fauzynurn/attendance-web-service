@@ -12,18 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.webservice.service.JadwalKuliahService;
-import com.attendance.webservice.model.JadwalKuliah;
 
 @RestController
 public class JadwalKuliahController {
 	@Autowired
-	JadwalKuliahService jdwlKuliahService;
+	JadwalKuliahService jadwalService;
 	
 	@GetMapping("/getjadwal")
-	public List<JadwalKuliah> getJdwlKelas(@RequestBody HashMap<String, String> request) {
+	public List getSchedule(@RequestBody HashMap<String, String> request) {
 		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
-		List<JadwalKuliah> jdwlKuliah = jdwlKuliahService.fetchJdwlKuliahDataInnerJoin(request.get("kdKelas"), hari);
-		return jdwlKuliah;
+		return jadwalService.fetchJadwalKuliah(request.get("kdKelas"), hari);
 	}
 }

@@ -26,7 +26,7 @@ public class Kelas {
 	private Set<Mahasiswa> mhs;
 	
 	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="kelas", orphanRemoval=false, fetch=FetchType.LAZY)
-	private Set<JadwalKuliah> jdwlKuliah;
+	private Set<JadwalKuliah> jadwalKuliah;
 	
 	public Kelas() {
 		

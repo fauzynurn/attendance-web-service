@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -38,11 +39,6 @@ public class JadwalKuliah {
 	private Matakuliah matkul;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="KODE_DOSEN", insertable=false, updatable=false)
-	@Fetch(FetchMode.JOIN)
-	private Dosen dosen;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="JAM_KE", insertable=false, updatable=false)
 	@Fetch(FetchMode.JOIN)
 	private Jam jam;
@@ -52,20 +48,21 @@ public class JadwalKuliah {
 	@Fetch(FetchMode.JOIN)
 	private Ruangan ruangan;
 	
-	@OneToMany(targetEntity=BeritaAcara.class, mappedBy="jdwlKuliah", orphanRemoval=false, fetch=FetchType.LAZY)
+	@OneToMany(targetEntity=BeritaAcara.class, mappedBy="jadwalKuliah", orphanRemoval=false, fetch=FetchType.LAZY)
 	private Set<BeritaAcara> beritaAcara;
+	
+	@ManyToMany(mappedBy="jadwalKuliah")
+	Set<Dosen> dosen;
 	
 	public JadwalKuliah() {
 		
 	}
 	
-	public JadwalKuliah(int idJadwal, Kelas kelas, String hari, Matakuliah matkul, Dosen dosen, Jam jam, Ruangan ruangan) {
+	public JadwalKuliah(String hari, Kelas kelas, Matakuliah matkul, Jam jam, Ruangan ruangan) {
 		super();
-		this.idJadwal = idJadwal;
-		this.kelas = kelas;
 		this.hari = hari;
+		this.kelas = kelas;
 		this.matkul = matkul;
-		this.dosen = dosen;
 		this.jam = jam;
 		this.ruangan = ruangan;
 	}
@@ -78,14 +75,6 @@ public class JadwalKuliah {
 		this.idJadwal = idJadwal;
 	}
 	
-	public Kelas getKelas() {
-		return kelas;
-	}
-	
-	public void setKelas(Kelas kelas) {
-		this.kelas = kelas;
-	}
-	
 	public String getHari() {
 		return hari;
 	}
@@ -94,20 +83,20 @@ public class JadwalKuliah {
 		this.hari = hari;
 	}
 	
+	public Kelas getKelas() {
+		return kelas;
+	}
+	
+	public void setKelas(Kelas kelas) {
+		this.kelas = kelas;
+	}
+	
 	public Matakuliah getMatkul() {
 		return matkul;
 	}
 	
 	public void setMatkul(Matakuliah matkul) {
 		this.matkul = matkul;
-	}
-	
-	public Dosen getDosen() {
-		return dosen;
-	}
-	
-	public void setDosen(Dosen dosen) {
-		this.dosen = dosen;
 	}
 	
 	public Jam getJam() {

@@ -25,12 +25,12 @@ public class MahasiswaController {
 	@PostMapping("/checkmhs")
 	public Map<String, String> checkMhs(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
-        Mahasiswa mhs = mhsService.findNim(request.get("nim"));
+        Mahasiswa mhs = mhsService.findByNim(request.get("nim"));
     	if(mhs == null) {
     		map.put("status", "404");
     		map.put("message", "User is not recognized");
     	} else {
-    		if(mhs.getPwdMhs().equals(request.get("password"))) {
+    		if(mhs.getPasswordMhs().equals(request.get("password"))) {
     			if(mhs.getImeiMhs() != null) {
     				if(mhs.getImeiMhs().equals(request.get("imei"))) {
 						map.put("status", "200");
@@ -75,10 +75,11 @@ public class MahasiswaController {
 	@PostMapping("/registermhs")
 	public Map<String, String> registerMhs(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
-        Mahasiswa mhs = mhsService.findNim(request.get("nim"));
+        Mahasiswa mhs = mhsService.findByNim(request.get("nim"));
         mhs.setPubKeyMhs(request.get("publicKey"));
         mhs.setImeiMhs(request.get("imei"));
-        mhsService.saveMhs(mhs);
+        mhsService.save(mhs);
+        
         map.put("status", "200");
         map.put("message", mhs.getKelas().getKdKelas());
         return map;

@@ -27,7 +27,7 @@ public class Jam {
 	private Time jamSelesai;
 	
 	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="jam", orphanRemoval=false, fetch=FetchType.LAZY)
-	private Set<JadwalKuliah> jdwlKuliah;
+	private Set<JadwalKuliah> jadwalKuliah;
 	
 	public Jam() {
 		

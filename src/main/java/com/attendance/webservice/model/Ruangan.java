@@ -26,7 +26,7 @@ public class Ruangan {
 	private String macAddress;
 	
 	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="ruangan", orphanRemoval=false, fetch=FetchType.LAZY)
-	private Set<JadwalKuliah> jdwlKuliah;
+	private Set<JadwalKuliah> jadwalKuliah;
 	
 	public Ruangan() {
 		

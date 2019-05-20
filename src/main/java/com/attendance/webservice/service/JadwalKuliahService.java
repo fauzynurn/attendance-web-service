@@ -10,9 +10,9 @@ import com.attendance.webservice.repository.JadwalKuliahRepository;
 @Service
 public class JadwalKuliahService {
 	@Autowired
-	JadwalKuliahRepository jdwlKuliahRepository;
+	JadwalKuliahRepository jadwalRepository;
 	
-	public List fetchJdwlKuliahDataInnerJoin(String kdKelas, String hari) {
-		return jdwlKuliahRepository.fetchJdwlKuliahDataInnerJoin(kdKelas, hari);
+	public List fetchJadwalKuliah(String kdKelas, String hari) {
+		return jadwalRepository.fetchJadwalKuliah(kdKelas, hari);
 	}
 }

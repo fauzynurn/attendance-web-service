@@ -11,11 +11,11 @@ public class MahasiswaService {
 	@Autowired
 	MahasiswaRepository mhsRepository;
 	
-	public Mahasiswa findNim(String nim) {
+	public Mahasiswa findByNim(String nim) {
 		return mhsRepository.findByNim(nim);
 	}
 	
-	public Mahasiswa saveMhs(Mahasiswa mhs) {
+	public Mahasiswa save(Mahasiswa mhs) {
 		return mhsRepository.save(mhs);
 	}
 }
