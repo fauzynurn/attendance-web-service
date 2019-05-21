@@ -13,19 +13,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.webservice.model.Mahasiswa;
 import com.attendance.webservice.model.Sign;
-import com.attendance.webservice.service.MahasiswaService;
+import com.attendance.webservice.repository.MahasiswaRepository;
 import com.attendance.webservice.utils.Base64;
 
 @RestController
 public class MahasiswaController {
 	@Autowired
-	MahasiswaService mhsService;
+	MahasiswaRepository mhsRepository;
 	private PublicKey savedPubKey;
 	
 	@PostMapping("/checkmhs")
 	public Map<String, String> checkMhs(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
-        Mahasiswa mhs = mhsService.findByNim(request.get("nim"));
+        Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
     	if(mhs == null) {
     		map.put("status", "404");
     		map.put("message", "User is not recognized");
@@ -75,10 +75,10 @@ public class MahasiswaController {
 	@PostMapping("/registermhs")
 	public Map<String, String> registerMhs(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
-        Mahasiswa mhs = mhsService.findByNim(request.get("nim"));
+        Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
         mhs.setPubKeyMhs(request.get("publicKey"));
         mhs.setImeiMhs(request.get("imei"));
-        mhsService.save(mhs);
+        mhsRepository.save(mhs);
         
         map.put("status", "200");
         map.put("message", mhs.getKelas().getKdKelas());

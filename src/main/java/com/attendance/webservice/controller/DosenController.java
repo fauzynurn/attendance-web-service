@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.webservice.model.Dosen;
-import com.attendance.webservice.service.DosenService;
+import com.attendance.webservice.repository.DosenRepository;
 
 @RestController
 public class DosenController {
 	@Autowired
-	DosenService dosenService;
+	DosenRepository dosenRepository;
 	
 	@PostMapping("/checkdosen")
 	public Map<String, String> checkDosen(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
-        Dosen dsn = dosenService.findByKdDosen(request.get("kdDosen"));
+        Dosen dsn = dosenRepository.findByKdDosen(request.get("kdDosen"));
     	if(dsn == null) {
     		map.put("status", "404");
     		map.put("message", "User is not recognized");
@@ -43,10 +43,10 @@ public class DosenController {
 	@PostMapping("/registerdosen")
 	public Map<String, String> registerDosen(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
-        Dosen dsn = dosenService.findByKdDosen(request.get("kdDosen"));
+        Dosen dsn = dosenRepository.findByKdDosen(request.get("kdDosen"));
         dsn.setPubKeyDosen(request.get("publicKey"));
         dsn.setImeiDosen(request.get("imei"));
-        dosenService.save(dsn);
+        dosenRepository.save(dsn);
         
         map.put("status","200");
         map.put("message", "Success");

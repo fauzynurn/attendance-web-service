@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.webservice.model.BeritaAcara;
 import com.attendance.webservice.model.JadwalKuliah;
-import com.attendance.webservice.service.BeritaAcaraService;
+import com.attendance.webservice.repository.BeritaAcaraRepository;
 
 @RestController
 public class BeritaAcaraController {
 	@Autowired
-	BeritaAcaraService beritaService;
+	BeritaAcaraRepository beritaRepository;
 	
 	@PostMapping("/aktifabsensi")
-	public Map<String, String> attendanceActive(@RequestBody HashMap<String, String> request) {
+	public Map<String, String> aktifAbsensi(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
 		List<BeritaAcara> berita = new ArrayList<>();
-		List idJadwal = beritaService.fetchIdJadwalDataInnerJoin(request.get("namaMatkul"), request.get("kdKelas"),
+		List idJadwal = beritaRepository.fetchIdJadwal(request.get("namaMatkul"), request.get("kdKelas"),
 				request.get("hari"));
 		Date date = new Date(System.currentTimeMillis());
 		Time time = new Time(System.currentTimeMillis());
@@ -41,7 +41,7 @@ public class BeritaAcaraController {
 		}
 		
 		for(int i = 0; i < berita.size(); i++) {
-			beritaService.save(berita.get(i));
+			beritaRepository.save(berita.get(i));
 		}
 		
         map.put("status","200");
