@@ -15,5 +15,5 @@ public interface BeritaAcaraRepository extends JpaRepository<BeritaAcara, Serial
 	
 	@Query("SELECT jk.idJadwal FROM JadwalKuliah jk INNER JOIN jk.matkul mk INNER JOIN jk.kelas k WHERE mk.namaMatkul = ?1 AND " +
 			"k.kdKelas = ?2 AND jk.hari = ?3")
-	List fetchIdJadwal(String namaMatkul, String kdKelas, String hari);
+	List<Integer> fetchIdJadwal(String namaMatkul, String kdKelas, String hari);
 }

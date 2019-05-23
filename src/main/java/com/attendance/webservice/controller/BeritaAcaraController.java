@@ -25,7 +25,7 @@ public class BeritaAcaraController {
 	public Map<String, String> aktifAbsensi(@RequestBody HashMap<String, String> request) {
 		HashMap<String, String> map = new HashMap<>();
 		List<BeritaAcara> berita = new ArrayList<>();
-		List idJadwal = beritaRepository.fetchIdJadwal(request.get("namaMatkul"), request.get("kdKelas"),
+		List<Integer> idJadwal = beritaRepository.fetchIdJadwal(request.get("namaMatkul"), request.get("kdKelas"),
 				request.get("hari"));
 		Date date = new Date(System.currentTimeMillis());
 		Time time = new Time(System.currentTimeMillis());
@@ -35,7 +35,7 @@ public class BeritaAcaraController {
 			BeritaAcara brt = new BeritaAcara();
 			JadwalKuliah jdwl = new JadwalKuliah();
 			brt.setTglAbsensi(date);
-			jdwl.setIdJadwal((int) idJadwal.get(i));
+			jdwl.setIdJadwal(idJadwal.get(i));
 			brt.setJadwalKuliah(jdwl);
 			berita.add(brt);
 		}

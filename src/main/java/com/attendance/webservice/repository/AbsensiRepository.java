@@ -1,6 +1,8 @@
 package com.attendance.webservice.repository;
 
 import java.io.Serializable;
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,4 +26,17 @@ public interface AbsensiRepository extends JpaRepository<Absensi, Serializable> 
 			"CAST(SUM(CASE WHEN a.statusKehadiran = 4 THEN 1 ELSE 0 END) AS char) AS alpa " +
 			"FROM Absensi a INNER JOIN a.mhs m WHERE m.nim = ?1")
 	List<Map> fetchAllKehadiran(String nim);
+	
+	@Query("SELECT ba.idBerita " +
+			"FROM BeritaAcara ba INNER JOIN ba.jadwalKuliah jk INNER JOIN jk.matkul mk INNER JOIN jk.jam j " +
+			"INNER JOIN jk.kelas k INNER JOIN k.mhs m " +
+			"WHERE mk.namaMatkul = ?1 AND ba.tglAbsensi = ?2 AND j.jamMulai <= ?3 AND j.jamSelesai > ?3 AND m.nim = ?4")
+	Integer fetchIdBerita(String namaMatkul, Date tglAbsensi, Time jam, String nim);
+	
+	@Query("SELECT a.idAbsensi " +
+			"FROM Absensi a " +
+			"WHERE a.mhs.nim = ?1 AND a.beritaAcara.idBerita = ?2")
+	Integer fetchIdAbsensi(String nim, int idBerita);
+	
+	Absensi save(Absensi absensi);
 }
