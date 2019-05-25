@@ -28,6 +28,9 @@ public class Ruangan {
 	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="ruangan", orphanRemoval=false, fetch=FetchType.LAZY)
 	private Set<JadwalKuliah> jadwalKuliah;
 	
+	@OneToMany(targetEntity=JadwalSementara.class, mappedBy="ruangan", orphanRemoval=false, fetch=FetchType.LAZY)
+	private Set<JadwalSementara> jadwalSementara;
+	
 	public Ruangan() {
 		
 	}

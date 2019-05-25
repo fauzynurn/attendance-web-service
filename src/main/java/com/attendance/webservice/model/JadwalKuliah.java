@@ -21,38 +21,41 @@ import org.hibernate.annotations.FetchMode;
 @Table(name="jadwal_kuliah")
 public class JadwalKuliah {
 	@Id
-	@Column(name="ID_JADWAL")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "ID_JADWAL")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idJadwal;
 	
-	@Column(name="HARI")
+	@Column(name = "HARI")
 	private String hari;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="KODE_KELAS", insertable=false, updatable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "KODE_KELAS")
 	@Fetch(FetchMode.JOIN)
 	private Kelas kelas;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ID_MATKUL", insertable=false, updatable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_MATKUL")
 	@Fetch(FetchMode.JOIN)
 	private Matakuliah matkul;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="JAM_KE", insertable=false, updatable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "JAM_KE")
 	@Fetch(FetchMode.JOIN)
 	private Jam jam;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="KODE_RUANGAN", insertable=false, updatable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "KODE_RUANGAN")
 	@Fetch(FetchMode.JOIN)
 	private Ruangan ruangan;
+
+	@ManyToMany(mappedBy = "jadwalKuliah")
+	private Set<Dosen> dosen;
 	
-	@OneToMany(targetEntity=BeritaAcara.class, mappedBy="jadwalKuliah", orphanRemoval=false, fetch=FetchType.LAZY)
+	@OneToMany(targetEntity = BeritaAcara.class, mappedBy = "jadwalKuliah", orphanRemoval = false, fetch = FetchType.LAZY)
 	private Set<BeritaAcara> beritaAcara;
 	
-	@ManyToMany(mappedBy="jadwalKuliah")
-	Set<Dosen> dosen;
+	@OneToMany(targetEntity = JadwalSementara.class, mappedBy = "jadwalKuliah", orphanRemoval = false, fetch = FetchType.LAZY)
+	private Set<JadwalSementara> jadwalSementara;
 	
 	public JadwalKuliah() {
 		

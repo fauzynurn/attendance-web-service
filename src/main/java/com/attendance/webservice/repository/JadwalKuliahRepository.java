@@ -1,6 +1,7 @@
 package com.attendance.webservice.repository;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,15 +13,28 @@ import com.attendance.webservice.model.JadwalKuliah;
 
 @Repository("JadwalKuliahRepository")
 public interface JadwalKuliahRepository extends JpaRepository<JadwalKuliah, Serializable> {
-	@Query("SELECT mk.namaMatkul AS namaMatkul, mk.jenisMatkul AS jenisMatkul, d.namaDosen AS namaDosen, j.jamMulai AS " +
-			"jamMulai, j.jamSelesai AS jamSelesai, r.kdRuangan AS kodeRuangan, r.macAddress AS macAddress FROM JadwalKuliah jk " +
-			"INNER JOIN jk.jam j INNER JOIN jk.matkul mk INNER JOIN jk.ruangan r INNER JOIN jk.kelas k INNER JOIN jk.dosen d " +
-			"WHERE k.kdKelas = ?1 AND jk.hari = ?2")
-	List<Map> fetchJadwalMhs(String kdKelas, String hari);
+	@Query("SELECT jk.idJadwal AS idJadwal, jk.matkul.namaMatkul AS namaMatkul, jk.matkul.jenisMatkul AS jenisMatkul, " +
+			"CASE WHEN js.jam.jamKe IS NULL THEN jk.jam.jamKe ELSE js.jam.jamKe END AS jamKe, " +
+			"CASE WHEN js.ruangan.kdRuangan IS NULL THEN jk.ruangan.kdRuangan ELSE js.ruangan.kdRuangan END AS kodeRuangan " +
+			"FROM JadwalKuliah jk LEFT JOIN jk.jadwalSementara js " +
+			"WHERE (jk.hari = ?1 OR js.tglKuliah = ?2) AND (js.tglKuliah IS NULL OR js.tglKuliah = ?2) AND jk.kelas.kdKelas = ?3")
+	List<Map> getJadwalMhs(String hari, Date tglKuliah, String kdKelas);
 	
-	@Query("SELECT mk.namaMatkul AS namaMatkul, mk.jenisMatkul AS jenisMatkul, k.kdKelas AS kodeKelas, j.jamMulai AS jamMulai, " +
-			"j.jamSelesai AS jamSelesai, r.kdRuangan AS kodeRuangan, r.macAddress AS macAddress FROM JadwalKuliah jk INNER JOIN " +
-			"jk.jam j INNER JOIN jk.matkul mk INNER JOIN jk.ruangan r INNER JOIN jk.kelas k INNER JOIN jk.dosen d WHERE " +
-			"d.kdDosen = ?1 AND jk.hari = ?2")
-	List<Map> fetchJadwalDosen(String kdDosen, String hari);
+	@Query("SELECT jk.matkul.namaMatkul AS namaMatkul, jk.matkul.jenisMatkul AS jenisMatkul, jk.kelas.kdKelas AS kodeKelas, " +
+			"CASE WHEN js.jam.jamKe IS NULL THEN jk.jam.jamKe ELSE js.jam.jamKe END AS jamKe, " +
+			"CASE WHEN js.ruangan.kdRuangan IS NULL THEN jk.ruangan.kdRuangan ELSE js.ruangan.kdRuangan END AS kodeRuangan, " +
+			"CASE WHEN js.jadwalKuliah.idJadwal IS NULL THEN true ELSE false END AS kodeJadwal " +
+			"FROM JadwalKuliah jk LEFT JOIN jk.jadwalSementara js INNER JOIN jk.dosen d " +
+			"WHERE (jk.hari = ?1 OR js.tglKuliah = ?2) AND (js.tglKuliah IS NULL OR js.tglKuliah = ?2) AND d.kdDosen = ?3")
+	List<Map> getJadwalDosen(String hari, Date tglKuliah, String kdDosen);
+	
+	@Query("SELECT j.jamMulai AS jamMulai, j.jamSelesai AS jamSelesai, r.macAddress AS macAddress " +
+			"FROM Jam j, Ruangan r " +
+			"WHERE j.jamKe = ?1 AND r.kdRuangan = ?2")
+	Map getJamRuangan(int jamKe, String kdRuangan);
+	
+	@Query("SELECT d.namaDosen " +
+			"FROM JadwalKuliah jk INNER JOIN jk.dosen d " +
+			"WHERE jk.idJadwal = ?1")
+	List<String>getNamaDosen(int idJadwal);
 }

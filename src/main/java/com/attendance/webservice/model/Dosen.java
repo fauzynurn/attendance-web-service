@@ -13,31 +13,31 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="dosen")
+@Table(name = "dosen")
 public class Dosen {
 	@Id
-	@Column(name="KODE_DOSEN")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)	
+	@Column(name = "KODE_DOSEN")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private String kdDosen;
 	
-	@Column(name="NAMA_DOSEN")
+	@Column(name = "NAMA_DOSEN")
 	private String namaDosen;
 	
-	@Column(name="PASSWORD_DOSEN")
+	@Column(name = "PASSWORD_DOSEN")
 	private String passwordDosen;
 	
-	@Column(name="IMEI_DOSEN")
+	@Column(name = "IMEI_DOSEN")
 	private String imeiDosen;
 	
-	@Column(name="PUBLIC_KEY_DOSEN")
+	@Column(name = "PUBLIC_KEY_DOSEN")
 	private String pubKeyDosen;
 	
 	@ManyToMany
 	@JoinTable(
-		name="dosen_jadwal",
-		joinColumns=@JoinColumn(name="KODE_DOSEN"),
-		inverseJoinColumns=@JoinColumn(name="ID_JADWAL"))
-	Set<JadwalKuliah> jadwalKuliah;
+		name = "dosen_jadwal",
+		joinColumns = @JoinColumn(name = "KODE_DOSEN"),
+		inverseJoinColumns = @JoinColumn(name = "ID_JADWAL"))
+	private Set<JadwalKuliah> jadwalKuliah;
 	
 	public Dosen() {
 		

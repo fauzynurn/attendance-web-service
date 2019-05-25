@@ -18,7 +18,7 @@ public class Jam {
 	@Id
 	@Column(name="JAM_KE")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private String jamKe;
+	private int jamKe;
 	
 	@Column(name="JAM_MULAI")
 	private Time jamMulai;
@@ -29,22 +29,25 @@ public class Jam {
 	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="jam", orphanRemoval=false, fetch=FetchType.LAZY)
 	private Set<JadwalKuliah> jadwalKuliah;
 	
+	@OneToMany(targetEntity=JadwalSementara.class, mappedBy="jam", orphanRemoval=false, fetch=FetchType.LAZY)
+	private Set<JadwalSementara> jadwalSementara;
+	
 	public Jam() {
 		
 	}
 	
-	public Jam(String jamKe, Time jamMulai, Time jamSelesai) {
+	public Jam(int jamKe, Time jamMulai, Time jamSelesai) {
 		super();
 		this.jamKe = jamKe;
 		this.jamMulai = jamMulai;
 		this.jamSelesai = jamSelesai;
 	}
 	
-	public String getJamKe() {
+	public int getJamKe() {
 		return jamKe;
 	}
 	
-	public void setJamKe(String jamKe) {
+	public void setJamKe(int jamKe) {
 		this.jamKe = jamKe;
 	}
 	
