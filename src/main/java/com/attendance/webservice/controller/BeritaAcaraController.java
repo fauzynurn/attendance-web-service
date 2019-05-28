@@ -21,31 +21,31 @@ public class BeritaAcaraController {
 	@Autowired
 	BeritaAcaraRepository beritaRepository;
 	
-	@PostMapping("/aktifabsensi")
-	public Map<String, String> aktifAbsensi(@RequestBody HashMap<String, String> request) {
-		HashMap<String, String> map = new HashMap<>();
-		List<BeritaAcara> berita = new ArrayList<>();
-		List<Integer> idJadwal = beritaRepository.fetchIdJadwal(request.get("namaMatkul"), request.get("kdKelas"),
-				request.get("hari"));
-		Date date = new Date(System.currentTimeMillis());
-		Time time = new Time(System.currentTimeMillis());
-		String now = time.toString();
-
-		for(int i = 0; i < idJadwal.size(); i++) {
-			BeritaAcara brt = new BeritaAcara();
-			JadwalKuliah jdwl = new JadwalKuliah();
-			brt.setTglAbsensi(date);
-			jdwl.setIdJadwal(idJadwal.get(i));
-			brt.setJadwalKuliah(jdwl);
-			berita.add(brt);
-		}
-		
-		for(int i = 0; i < berita.size(); i++) {
-			beritaRepository.save(berita.get(i));
-		}
-		
-        map.put("status","200");
-        map.put("message", now);
-        return map;
-	}
+//	@PostMapping("/aktifabsensi")
+//	public Map<String, String> aktifAbsensi(@RequestBody HashMap<String, String> request) {
+//		HashMap<String, String> map = new HashMap<>();
+//		List<BeritaAcara> berita = new ArrayList<>();
+//		List<Integer> idJadwal = beritaRepository.fetchIdJadwal(request.get("namaMatkul"), request.get("kdKelas"),
+//				request.get("hari"));
+//		Date date = new Date(System.currentTimeMillis());
+//		Time time = new Time(System.currentTimeMillis());
+//		String now = time.toString();
+//
+//		for(int i = 0; i < idJadwal.size(); i++) {
+//			BeritaAcara brt = new BeritaAcara();
+//			JadwalKuliah jdwl = new JadwalKuliah();
+//			brt.setTglAbsensi(date);
+//			jdwl.setIdJadwal(idJadwal.get(i));
+//			brt.setJadwalKuliah(jdwl);
+//			berita.add(brt);
+//		}
+//		
+//		for(int i = 0; i < berita.size(); i++) {
+//			beritaRepository.save(berita.get(i));
+//		}
+//		
+//        map.put("status","200");
+//        map.put("message", now);
+//        return map;
+//	}
 }

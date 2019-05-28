@@ -14,18 +14,20 @@ import com.attendance.webservice.model.Absensi;
 
 @Repository("AbsensiRepository")
 public interface AbsensiRepository extends JpaRepository<Absensi, Serializable> {
-	@Query("SELECT mk.namaMatkul AS namaMatkul, mk.jenisMatkul AS jenisMatkul, " +
+	@Query("SELECT a.beritaAcara.jadwalKuliah.matkul.namaMatkul AS namaMatkul, " +
+			"a.beritaAcara.jadwalKuliah.matkul.jenisMatkul AS jenisMatkul, " +
 			"CAST(SUM(CASE WHEN a.statusKehadiran = 1 THEN 1 ELSE 0 END) AS char) AS hadir, " +
 			"CAST(SUM(CASE WHEN a.statusKehadiran != 1 THEN 1 ELSE 0 END) AS char) AS tidakHadir " +
-			"FROM Absensi a INNER JOIN a.mhs m INNER JOIN a.beritaAcara ba INNER JOIN ba.jadwalKuliah jk INNER JOIN " +
-			"jk.matkul mk WHERE m.nim = ?1 GROUP BY mk.idMatkul")
-	List<Map> fetchMatkulKehadiran(String nim);
+			"FROM Absensi a " +
+			"WHERE a.mhs.nim = ?1 " +
+			"GROUP BY a.beritaAcara.jadwalKuliah.matkul.idMatkul")
+	List<Map> getKehadiran(String nim);
 	
-	@Query("SELECT CAST(SUM(CASE WHEN a.statusKehadiran = 2 THEN 1 ELSE 0 END) AS char) AS sakit, " +
-			"CAST(SUM(CASE WHEN a.statusKehadiran = 3 THEN 1 ELSE 0 END) AS char) AS izin, " +
-			"CAST(SUM(CASE WHEN a.statusKehadiran = 4 THEN 1 ELSE 0 END) AS char) AS alpa " +
-			"FROM Absensi a INNER JOIN a.mhs m WHERE m.nim = ?1")
-	List<Map> fetchAllKehadiran(String nim);
+	@Query("SELECT SUM(CASE WHEN a.statusKehadiran = 2 THEN 1 ELSE 0 END) AS sakit, " +
+			"SUM(CASE WHEN a.statusKehadiran = 3 THEN 1 ELSE 0 END) AS izin, " +
+			"SUM(CASE WHEN a.statusKehadiran = 4 THEN 1 ELSE 0 END) AS alpa " +
+			"FROM Absensi a WHERE a.mhs.nim = ?1")
+	Map<String, String> getKetidakhadiran(String nim);
 	
 	@Query("SELECT ba.idBerita " +
 			"FROM BeritaAcara ba INNER JOIN ba.jadwalKuliah jk INNER JOIN jk.matkul mk INNER JOIN jk.jam j " +

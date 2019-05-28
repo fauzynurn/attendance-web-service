@@ -14,23 +14,23 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
-@Table(name="absensi")
+@Table(name = "absensi")
 public class Absensi {
 	@Id
-	@Column(name="ID_ABSENSI")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)	
+	@Column(name = "ID_ABSENSI")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private int idAbsensi;
 	
-	@Column(name="STATUS_KEHADIRAN")
+	@Column(name = "STATUS_KEHADIRAN")
 	private int statusKehadiran;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ID_BERITA")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_BERITA")
 	@Fetch(FetchMode.JOIN)
 	private BeritaAcara beritaAcara;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="NIM")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "NIM")
 	@Fetch(FetchMode.JOIN)
 	private Mahasiswa mhs;
 	

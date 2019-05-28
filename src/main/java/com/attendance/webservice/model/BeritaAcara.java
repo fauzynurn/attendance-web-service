@@ -1,6 +1,6 @@
 package com.attendance.webservice.model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -18,48 +18,53 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
-@Table(name="berita_acara")
+@Table(name = "berita_acara")
 public class BeritaAcara {
 	@Id
-	@Column(name="ID_BERITA")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)	
+	@Column(name = "ID_BERITA")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private int idBerita;
 	
-	@Column(name="TGL_ABSENSI")
-	private Date tglAbsensi;
+	@Column(name = "TGL_ABSENSI")
+	private Timestamp tglAbsensi;
 	
-	@Column(name="TATAP_MUKA")
+	@Column(name = "TATAP_MUKA")
 	private String tatapMuka;
 	
-	@Column(name="TUGAS_TERSTRUKTUR")
+	@Column(name = "TUGAS_TERSTRUKTUR")
 	private String tgsTerstruktur;
 	
-	@Column(name="PARAF_DOSEN")
+	@Column(name = "PARAF_DOSEN")
 	private boolean parafDosen;
 	
-	@Column(name="PARAF_KETUA_KELAS")
+	@Column(name = "PARAF_KETUA_KELAS")
 	private boolean parafKetuaKelas;
 	
-	@Column(name="PARAF_DOSEN_WALI")
+	@Column(name = "PARAF_DOSEN_WALI")
 	private boolean parafDosenWali;
 
-	@Column(name="PARAF_KAPROD")
+	@Column(name = "PARAF_KAPROD")
 	private boolean parafKaprod;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="ID_JADWAL")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_JADWAL")
 	@Fetch(FetchMode.JOIN)
 	private JadwalKuliah jadwalKuliah;
 	
-	@OneToMany(targetEntity=Absensi.class, mappedBy="beritaAcara", orphanRemoval=false, fetch=FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PENGGANTI")
+	@Fetch(FetchMode.JOIN)
+	private JadwalPengganti jadwalPengganti;
+	
+	@OneToMany(targetEntity = Absensi.class, mappedBy = "beritaAcara", orphanRemoval = false, fetch = FetchType.LAZY)
 	private Set<Absensi> absensi;
 	
 	public BeritaAcara() {
 		
 	}
 	
-	public BeritaAcara(Date tglAbsensi, String tatapMuka, String tgsTerstruktur, boolean parafDosen, boolean parafKetuaKelas,
-			boolean parafDosenWali, boolean parafKaprod, JadwalKuliah jadwalKuliah) {
+	public BeritaAcara(Timestamp tglAbsensi, String tatapMuka, String tgsTerstruktur, boolean parafDosen, boolean parafKetuaKelas,
+			boolean parafDosenWali, boolean parafKaprod, JadwalKuliah jadwalKuliah, JadwalPengganti jadwalPengganti) {
 		super();
 		this.tglAbsensi = tglAbsensi;
 		this.tatapMuka = tatapMuka;
@@ -69,6 +74,7 @@ public class BeritaAcara {
 		this.parafDosenWali = parafDosenWali;
 		this.parafKaprod = parafKaprod;
 		this.jadwalKuliah = jadwalKuliah;
+		this.jadwalPengganti = jadwalPengganti;
 	}
 	
 	public int getIdBerita() {
@@ -79,11 +85,11 @@ public class BeritaAcara {
 		this.idBerita = idBerita;
 	}
 	
-	public Date getTglAbsensi() {
+	public Timestamp getTglAbsensi() {
 		return tglAbsensi;
 	}
 	
-	public void setTglAbsensi(Date tglAbsensi) {
+	public void setTglAbsensi(Timestamp tglAbsensi) {
 		this.tglAbsensi = tglAbsensi;
 	}
 	
@@ -141,5 +147,13 @@ public class BeritaAcara {
 	
 	public void setJadwalKuliah(JadwalKuliah jadwalKuliah) {
 		this.jadwalKuliah = jadwalKuliah;
+	}
+	
+	public JadwalPengganti getJadwalPengganti() {
+		return jadwalPengganti;
+	}
+	
+	public void setJadwalPengganti(JadwalPengganti jadwalPengganti) {
+		this.jadwalPengganti = jadwalPengganti;
 	}
 }

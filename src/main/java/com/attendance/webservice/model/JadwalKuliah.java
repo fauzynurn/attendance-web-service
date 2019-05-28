@@ -54,8 +54,8 @@ public class JadwalKuliah {
 	@OneToMany(targetEntity = BeritaAcara.class, mappedBy = "jadwalKuliah", orphanRemoval = false, fetch = FetchType.LAZY)
 	private Set<BeritaAcara> beritaAcara;
 	
-	@OneToMany(targetEntity = JadwalSementara.class, mappedBy = "jadwalKuliah", orphanRemoval = false, fetch = FetchType.LAZY)
-	private Set<JadwalSementara> jadwalSementara;
+	@OneToMany(targetEntity = JadwalPengganti.class, mappedBy = "jadwalKuliah", orphanRemoval = false, fetch = FetchType.LAZY)
+	private Set<JadwalPengganti> jadwalPengganti;
 	
 	public JadwalKuliah() {
 		

@@ -17,31 +17,31 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
-@Table(name="mahasiswa")
+@Table(name = "mahasiswa")
 public class Mahasiswa {
 	@Id
-	@Column(name="NIM")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "NIM")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String nim;
 	
-	@Column(name="NAMA_MHS")
+	@Column(name = "NAMA_MHS")
 	private String namaMhs;
 	
-	@Column(name="PASSWORD_MHS")
+	@Column(name = "PASSWORD_MHS")
 	private String passwordMhs;
 	
-	@Column(name="IMEI_MHS")
+	@Column(name = "IMEI_MHS")
 	private String imeiMhs;
 	
-	@Column(name="PUBLIC_KEY_MHS")
+	@Column(name = "PUBLIC_KEY_MHS")
 	private String pubKeyMhs;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="KODE_KELAS", insertable=false, updatable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "KODE_KELAS")
 	@Fetch(FetchMode.JOIN)
 	private Kelas kelas;
 	
-	@OneToMany(targetEntity=Absensi.class, mappedBy="mhs", orphanRemoval=false, fetch=FetchType.LAZY)
+	@OneToMany(targetEntity = Absensi.class, mappedBy = "mhs", orphanRemoval = false, fetch = FetchType.LAZY)
 	private Set<Absensi> absensi;
 	
 	public Mahasiswa() {

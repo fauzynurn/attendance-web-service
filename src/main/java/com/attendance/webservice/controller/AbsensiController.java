@@ -24,14 +24,14 @@ public class AbsensiController {
 	@Autowired
 	AbsensiRepository absensiRepository;
 	
-	@GetMapping("/getmatkulkehadiran")
-	public List<Map> getMatkulKehadiran(@RequestBody HashMap<String, String> request) {
-		return absensiRepository.fetchMatkulKehadiran(request.get("nim"));
+	@GetMapping("/getkehadiran")
+	public List<Map> getKehadiran(@RequestBody Map<String, String> request) {
+		return absensiRepository.getKehadiran(request.get("nim"));
 	}
 	
-	@GetMapping("/getallkehadiran")
-	public List<Map> getAllKehadiran(@RequestBody HashMap<String, String> request) {
-		return absensiRepository.fetchAllKehadiran(request.get("nim"));
+	@GetMapping("/getketidakhadiran")
+	public Map<String, String> getKetidakhadiran(@RequestBody Map<String, String> request) {
+		return absensiRepository.getKetidakhadiran(request.get("nim"));
 	}
 	
 	@PostMapping("/getabsen")

@@ -12,24 +12,24 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="ruangan")
+@Table(name = "ruangan")
 public class Ruangan {
 	@Id
-	@Column(name="KODE_RUANGAN")
-	@GeneratedValue(strategy=GenerationType.IDENTITY)	
+	@Column(name = "KODE_RUANGAN")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private String kdRuangan;
 	
-	@Column(name="NAMA_RUANGAN")
+	@Column(name = "NAMA_RUANGAN")
 	private String namaRuangan;
 	
-	@Column(name="MAC_ADDRESS")
+	@Column(name = "MAC_ADDRESS")
 	private String macAddress;
 	
-	@OneToMany(targetEntity=JadwalKuliah.class, mappedBy="ruangan", orphanRemoval=false, fetch=FetchType.LAZY)
+	@OneToMany(targetEntity = JadwalKuliah.class, mappedBy = "ruangan", orphanRemoval = false, fetch = FetchType.LAZY)
 	private Set<JadwalKuliah> jadwalKuliah;
 	
-	@OneToMany(targetEntity=JadwalSementara.class, mappedBy="ruangan", orphanRemoval=false, fetch=FetchType.LAZY)
-	private Set<JadwalSementara> jadwalSementara;
+	@OneToMany(targetEntity = JadwalPengganti.class, mappedBy = "ruangan", orphanRemoval = false, fetch = FetchType.LAZY)
+	private Set<JadwalPengganti> jadwalPengganti;
 	
 	public Ruangan() {
 		

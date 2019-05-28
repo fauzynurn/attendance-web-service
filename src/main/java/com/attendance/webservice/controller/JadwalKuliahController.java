@@ -17,65 +17,94 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.webservice.repository.JadwalKuliahRepository;
+import com.attendance.webservice.repository.JadwalPenggantiRepository;
 
 @RestController
 public class JadwalKuliahController {
 	@Autowired
 	JadwalKuliahRepository jadwalRepository;
+	@Autowired
+	JadwalPenggantiRepository penggantiRepository;
 	
 	@GetMapping("/getjadwalmhs")
-	public List<Map> getJadwalMhs(@RequestBody Map<String, String> request) throws ParseException {
-		List<Map> maps = new ArrayList<>();
+	public Map<String, List<Map>> getJadwalMhs(@RequestBody Map<String, String> request) throws ParseException {
+		Map<String, List<Map>> jadwal = new LinkedHashMap<>();
+		List<Map> jadwalMaps = new ArrayList<>();
+		List<Map> penggantiMaps = new ArrayList<>();
+		
 		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date tgl = sdf.parse(request.get("tgl"));
-		List<Map> jadwal = jadwalRepository.getJadwalMhs(hari, tgl, request.get("kdKelas"));
+		List<Map> jadwalKuliah = jadwalRepository.getJadwalMhs(tgl, hari, request.get("kdKelas"));
+		List<Map> jadwalPengganti = penggantiRepository.getJadwalPenggantiMhs(tgl);
 		
-		for(Map item : jadwal) {
+		for(Map item : jadwalKuliah) {
 			Map map = new LinkedHashMap<>();
 			List<String> dosen = new ArrayList<>();
 			List<String> namaDosen = jadwalRepository.getNamaDosen((int) item.get("idJadwal"));
 			for(int i = 0; i < namaDosen.size(); i++) {
 				dosen.add(namaDosen.get(i));
 			}
-			Map jamRuangan= jadwalRepository.getJamRuangan((int) item.get("jamKe"), (String) item.get("kodeRuangan"));
 			
 			map.put("namaMatkul", item.get("namaMatkul"));
 			map.put("jenisMatkul", item.get("jenisMatkul"));
 			map.put("namaDosen", dosen);
-			map.put("jamMulai", jamRuangan.get("jamMulai"));
-			map.put("jamSelesai", jamRuangan.get("jamSelesai"));
+			map.put("jamMulai", item.get("jamMulai"));
+			map.put("jamSelesai", item.get("jamSelesai"));
 			map.put("kodeRuangan", item.get("kodeRuangan"));
-			map.put("macAddress", jamRuangan.get("macAddress"));
-			maps.add(map);
+			map.put("macAddress", item.get("macAddress"));
+			map.put("jamMulaiOlehDosen", item.get("tglAbsensi"));
+			jadwalMaps.add(map);
 		}
-		return maps;
-	}
-	
-	@GetMapping("/getjadwaldosen")
-	public List<Map> getJadwalDosen(@RequestBody Map<String, String> request) throws ParseException {
-		List<Map> maps = new ArrayList<>();
-		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date tgl = sdf.parse(request.get("tgl"));
-		List<Map> jadwal = jadwalRepository.getJadwalDosen(hari, tgl, request.get("kdDosen"));
 		
-		for(Map item : jadwal) {
+		for(Map item : jadwalPengganti) {
 			Map map = new LinkedHashMap<>();
-			Map jamRuangan= jadwalRepository.getJamRuangan((int) item.get("jamKe"), (String) item.get("kodeRuangan"));
+			List<String> dosen = new ArrayList<>();
+			List<String> namaDosen = jadwalRepository.getNamaDosen((int) item.get("idJadwal"));
+			for(int i = 0; i < namaDosen.size(); i++) {
+				dosen.add(namaDosen.get(i));
+			}
 			
 			map.put("namaMatkul", item.get("namaMatkul"));
 			map.put("jenisMatkul", item.get("jenisMatkul"));
-			map.put("kodeKelas", item.get("kodeKelas"));
-			map.put("jamMulai", jamRuangan.get("jamMulai"));
-			map.put("jamSelesai", jamRuangan.get("jamSelesai"));
+			map.put("namaDosen", dosen);
+			map.put("jamMulai", item.get("jamMulai"));
+			map.put("jamSelesai", item.get("jamSelesai"));
 			map.put("kodeRuangan", item.get("kodeRuangan"));
-			map.put("macAddress", jamRuangan.get("macAddress"));
-			map.put("kodeJadwal", item.get("kodeJadwal"));
-			maps.add(map);
+			map.put("macAddress", item.get("macAddress"));
+			map.put("jamMulaiOlehDosen", item.get("tglAbsensi"));
+			penggantiMaps.add(map);
 		}
-		return maps;
+		
+		jadwal.put("jadwalReguler", jadwalMaps);
+		jadwal.put("jadwalPengganti", penggantiMaps);
+		return jadwal;
 	}
+	
+//	@GetMapping("/getjadwaldosen")
+//	public List<Map> getJadwalDosen(@RequestBody Map<String, String> request) throws ParseException {
+//		List<Map> maps = new ArrayList<>();
+//		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//		Date tgl = sdf.parse(request.get("tgl"));
+//		List<Map> jadwal = jadwalRepository.getJadwalDosen(hari, tgl, request.get("kdDosen"));
+//		
+//		for(Map item : jadwal) {
+//			Map map = new LinkedHashMap<>();
+//			Map jamRuangan= jadwalRepository.getJamRuangan((int) item.get("jamKe"), (String) item.get("kodeRuangan"));
+//			
+//			map.put("namaMatkul", item.get("namaMatkul"));
+//			map.put("jenisMatkul", item.get("jenisMatkul"));
+//			map.put("kodeKelas", item.get("kodeKelas"));
+//			map.put("jamMulai", jamRuangan.get("jamMulai"));
+//			map.put("jamSelesai", jamRuangan.get("jamSelesai"));
+//			map.put("kodeRuangan", item.get("kodeRuangan"));
+//			map.put("macAddress", jamRuangan.get("macAddress"));
+//			map.put("kodeJadwal", item.get("kodeJadwal"));
+//			maps.add(map);
+//		}
+//		return maps;
+//	}
 }
