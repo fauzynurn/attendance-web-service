@@ -32,10 +32,12 @@ public class JadwalKuliahController {
 		List<Map> jadwalMaps = new ArrayList<>();
 		List<Map> penggantiMaps = new ArrayList<>();
 		
-		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date tgl = sdf.parse(request.get("tgl"));
+		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+		Date tgl = sdf1.parse(request.get("tgl"));
+		tgl = sdf2.parse(sdf2.format(tgl));
 		List<Map> jadwalKuliah = jadwalRepository.getJadwalMhs(tgl, hari, request.get("kdKelas"));
 		List<Map> jadwalPengganti = penggantiRepository.getJadwalPenggantiMhs(tgl, request.get("kdKelas"));
 		
@@ -88,10 +90,12 @@ public class JadwalKuliahController {
 		List<Map> jadwalMaps = new ArrayList<>();
 		List<Map> penggantiMaps = new ArrayList<>();
 		
-		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date tgl = sdf.parse(request.get("tgl"));
+		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+		Date tgl = sdf1.parse(request.get("tgl"));
+		tgl = sdf2.parse(sdf2.format(tgl));
 		List<Map> jadwalKuliah = jadwalRepository.getJadwalDosen(tgl, hari, request.get("kdDosen"));
 		List<Map> jadwalPengganti = penggantiRepository.getJadwalPenggantiDosen(tgl, request.get("kdDosen"));
 		
