@@ -37,7 +37,7 @@ public class JadwalKuliahController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date tgl = sdf.parse(request.get("tgl"));
 		List<Map> jadwalKuliah = jadwalRepository.getJadwalMhs(tgl, hari, request.get("kdKelas"));
-		List<Map> jadwalPengganti = penggantiRepository.getJadwalPenggantiMhs(tgl);
+		List<Map> jadwalPengganti = penggantiRepository.getJadwalPenggantiMhs(tgl, request.get("kdKelas"));
 		
 		for(Map item : jadwalKuliah) {
 			Map map = new LinkedHashMap<>();
@@ -82,29 +82,49 @@ public class JadwalKuliahController {
 		return jadwal;
 	}
 	
-//	@GetMapping("/getjadwaldosen")
-//	public List<Map> getJadwalDosen(@RequestBody Map<String, String> request) throws ParseException {
-//		List<Map> maps = new ArrayList<>();
-//		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//		Date tgl = sdf.parse(request.get("tgl"));
-//		List<Map> jadwal = jadwalRepository.getJadwalDosen(hari, tgl, request.get("kdDosen"));
-//		
-//		for(Map item : jadwal) {
-//			Map map = new LinkedHashMap<>();
-//			Map jamRuangan= jadwalRepository.getJamRuangan((int) item.get("jamKe"), (String) item.get("kodeRuangan"));
-//			
-//			map.put("namaMatkul", item.get("namaMatkul"));
-//			map.put("jenisMatkul", item.get("jenisMatkul"));
-//			map.put("kodeKelas", item.get("kodeKelas"));
-//			map.put("jamMulai", jamRuangan.get("jamMulai"));
-//			map.put("jamSelesai", jamRuangan.get("jamSelesai"));
-//			map.put("kodeRuangan", item.get("kodeRuangan"));
-//			map.put("macAddress", jamRuangan.get("macAddress"));
-//			map.put("kodeJadwal", item.get("kodeJadwal"));
-//			maps.add(map);
-//		}
-//		return maps;
-//	}
+	@GetMapping("/getjadwaldosen")
+	public Map<String, List<Map>> getJadwalDosen(@RequestBody Map<String, String> request) throws ParseException {
+		Map<String, List<Map>> jadwal = new LinkedHashMap<>();
+		List<Map> jadwalMaps = new ArrayList<>();
+		List<Map> penggantiMaps = new ArrayList<>();
+		
+		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date tgl = sdf.parse(request.get("tgl"));
+		List<Map> jadwalKuliah = jadwalRepository.getJadwalDosen(tgl, hari, request.get("kdDosen"));
+		List<Map> jadwalPengganti = penggantiRepository.getJadwalPenggantiDosen(tgl, request.get("kdDosen"));
+		
+		for(Map item : jadwalKuliah) {
+			Map map = new LinkedHashMap<>();
+			
+			map.put("namaMatkul", item.get("namaMatkul"));
+			map.put("jenisMatkul", item.get("jenisMatkul"));
+			map.put("kodeKelas", item.get("kodeKelas"));
+			map.put("jamMulai", item.get("jamMulai"));
+			map.put("jamSelesai", item.get("jamSelesai"));
+			map.put("kodeRuangan", item.get("kodeRuangan"));
+			map.put("macAddress", item.get("macAddress"));
+			map.put("jamMulaiOlehDosen", item.get("tglAbsensi"));
+			jadwalMaps.add(map);
+		}
+		
+		for(Map item : jadwalPengganti) {
+			Map map = new LinkedHashMap<>();
+			
+			map.put("namaMatkul", item.get("namaMatkul"));
+			map.put("jenisMatkul", item.get("jenisMatkul"));
+			map.put("kodeKelas", item.get("kodeKelas"));
+			map.put("jamMulai", item.get("jamMulai"));
+			map.put("jamSelesai", item.get("jamSelesai"));
+			map.put("kodeRuangan", item.get("kodeRuangan"));
+			map.put("macAddress", item.get("macAddress"));
+			map.put("jamMulaiOlehDosen", item.get("tglAbsensi"));
+			penggantiMaps.add(map);
+		}
+		
+		jadwal.put("jadwalReguler", jadwalMaps);
+		jadwal.put("jadwalPengganti", penggantiMaps);
+		return jadwal;
+	}
 }
