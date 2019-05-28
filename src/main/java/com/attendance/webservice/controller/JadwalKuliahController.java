@@ -51,6 +51,7 @@ public class JadwalKuliahController {
 			
 			map.put("namaMatkul", item.get("namaMatkul"));
 			map.put("jenisMatkul", item.get("jenisMatkul"));
+			map.put("kodeMatkul", item.get("kodeMatkul"));
 			map.put("namaDosen", dosen);
 			map.put("jamMulai", item.get("jamMulai"));
 			map.put("jamSelesai", item.get("jamSelesai"));
@@ -70,6 +71,7 @@ public class JadwalKuliahController {
 			
 			map.put("namaMatkul", item.get("namaMatkul"));
 			map.put("jenisMatkul", item.get("jenisMatkul"));
+			map.put("kodeMatkul", item.get("kodeMatkul"));
 			map.put("namaDosen", dosen);
 			map.put("jamMulai", item.get("jamMulai"));
 			map.put("jamSelesai", item.get("jamSelesai"));
@@ -104,6 +106,7 @@ public class JadwalKuliahController {
 			
 			map.put("namaMatkul", item.get("namaMatkul"));
 			map.put("jenisMatkul", item.get("jenisMatkul"));
+			map.put("kodeMatkul", item.get("kodeMatkul"));
 			map.put("kodeKelas", item.get("kodeKelas"));
 			map.put("jamMulai", item.get("jamMulai"));
 			map.put("jamSelesai", item.get("jamSelesai"));
@@ -118,6 +121,7 @@ public class JadwalKuliahController {
 			
 			map.put("namaMatkul", item.get("namaMatkul"));
 			map.put("jenisMatkul", item.get("jenisMatkul"));
+			map.put("kodeMatkul", item.get("kodeMatkul"));
 			map.put("kodeKelas", item.get("kodeKelas"));
 			map.put("jamMulai", item.get("jamMulai"));
 			map.put("jamSelesai", item.get("jamSelesai"));

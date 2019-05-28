@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,18 +16,26 @@ import org.springframework.web.bind.annotation.RestController;
 import com.attendance.webservice.model.BeritaAcara;
 import com.attendance.webservice.model.JadwalKuliah;
 import com.attendance.webservice.repository.BeritaAcaraRepository;
+import com.attendance.webservice.repository.JadwalKuliahRepository;
 
 @RestController
 public class BeritaAcaraController {
 	@Autowired
 	BeritaAcaraRepository beritaRepository;
+	@Autowired
+	JadwalKuliahRepository jadwalRepository;
 	
-//	@PostMapping("/aktifabsensi")
-//	public Map<String, String> aktifAbsensi(@RequestBody HashMap<String, String> request) {
-//		HashMap<String, String> map = new HashMap<>();
+//	@PostMapping("/mulaikbm")
+//	public Map<String, String> mulaiKbm(@RequestBody Map<String, String> request) {
+//		Map<String, String> map = new LinkedHashMap<>();
 //		List<BeritaAcara> berita = new ArrayList<>();
-//		List<Integer> idJadwal = beritaRepository.fetchIdJadwal(request.get("namaMatkul"), request.get("kdKelas"),
+//		if(request.get("kdJadwal") == "1") {
+//			List<Integer> idJadwal = jadwalRepository.getIdJadwalKuliah(request.get("kdMatkul"), request.get("kdKelas"),
 //				request.get("hari"));
+//		} else if(request.get("kdJadwal") == "2") {
+//			List<Integer> idJadwal = jadwalRepository.getIdJadwalSementara(request.get("namaMatkul"), request.get("kdKelas"),
+//				request.get("hari"));
+//		}
 //		Date date = new Date(System.currentTimeMillis());
 //		Time time = new Time(System.currentTimeMillis());
 //		String now = time.toString();

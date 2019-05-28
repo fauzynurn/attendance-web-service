@@ -14,17 +14,17 @@ import com.attendance.webservice.model.JadwalKuliah;
 @Repository("JadwalKuliahRepository")
 public interface JadwalKuliahRepository extends JpaRepository<JadwalKuliah, Serializable> {
 	@Query("SELECT jk.idJadwal AS idJadwal, jk.matkul.namaMatkul AS namaMatkul, jk.matkul.jenisMatkul AS jenisMatkul, " +
-			"jk.jam.jamMulai AS jamMulai, jk.jam.jamSelesai AS jamSelesai, jk.ruangan.kdRuangan AS kodeRuangan, " +
-			"jk.ruangan.macAddress AS macAddress, TIME(ba.tglAbsensi) AS tglAbsensi " +
+			"jk.matkul.kdMatkul AS kodeMatkul, jk.jam.jamMulai AS jamMulai, jk.jam.jamSelesai AS jamSelesai, " +
+			"jk.ruangan.kdRuangan AS kodeRuangan, jk.ruangan.macAddress AS macAddress, TIME(ba.tglAbsensi) AS tglAbsensi " +
 			"FROM JadwalKuliah jk LEFT JOIN jk.jadwalPengganti jp ON jk.idJadwal = jp.jadwalKuliah.idJadwal " +
 			"AND jp.tglKuliah = ?1 LEFT JOIN jk.beritaAcara ba ON ba.jadwalKuliah.idJadwal = jk.idJadwal " +
 			"AND DATE(ba.tglAbsensi) = ?1 " +
 			"WHERE jk.hari = ?2 AND jk.kelas.kdKelas = ?3 AND jp.jadwalKuliah.idJadwal IS NULL")
 	List<Map> getJadwalMhs(Date tglKuliah, String hari, String kdKelas);
 	
-	@Query("SELECT jk.matkul.namaMatkul AS namaMatkul, jk.matkul.jenisMatkul AS jenisMatkul, jk.kelas.kdKelas AS kodeKelas, " +
-			"jk.jam.jamMulai AS jamMulai, jk.jam.jamSelesai AS jamSelesai, jk.ruangan.kdRuangan AS kodeRuangan, " +
-			"jk.ruangan.macAddress AS macAddress, TIME(ba.tglAbsensi) AS tglAbsensi " +
+	@Query("SELECT jk.matkul.namaMatkul AS namaMatkul, jk.matkul.jenisMatkul AS jenisMatkul, jk.matkul.kdMatkul AS kodeMatkul, " +
+			"jk.kelas.kdKelas AS kodeKelas, jk.jam.jamMulai AS jamMulai, jk.jam.jamSelesai AS jamSelesai, " +
+			"jk.ruangan.kdRuangan AS kodeRuangan, jk.ruangan.macAddress AS macAddress, TIME(ba.tglAbsensi) AS tglAbsensi " +
 			"FROM JadwalKuliah jk LEFT JOIN jk.jadwalPengganti jp ON jk.idJadwal = jp.jadwalKuliah.idJadwal " +
 			"AND jp.tglKuliah = ?1 LEFT JOIN jk.beritaAcara ba ON ba.jadwalKuliah.idJadwal = jk.idJadwal " +
 			"AND DATE(ba.tglAbsensi) = ?1 INNER JOIN jk.dosen d " +
