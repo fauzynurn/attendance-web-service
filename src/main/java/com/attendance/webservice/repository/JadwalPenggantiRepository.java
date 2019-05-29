@@ -1,6 +1,7 @@
 package com.attendance.webservice.repository;
 
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,4 +31,11 @@ public interface JadwalPenggantiRepository extends JpaRepository<JadwalPengganti
 			"AND DATE(ba.tglAbsensi) = ?1 INNER JOIN jp.jadwalKuliah.dosen d " +
 			"WHERE jp.tglPengganti = ?1 AND d.kdDosen = ?2")
 	List<Map> getJadwalPenggantiDosen(Date tglPengganti, String kdKelas);
+	
+	@Query("SELECT jp.idPengganti " +
+			"FROM JadwalPengganti jp " +
+			"WHERE EXISTS(SELECT jp.idPengganti FROM JadwalPengganti jp WHERE jp.jam.jamMulai <= ?1 " +
+			"AND jp.jam.jamSelesai >= ?1) AND jp.tglPengganti = ?2 AND jp.jadwalKuliah.matkul.namaMatkul = ?3 " +
+			"AND jp.jadwalKuliah.kelas.kdKelas = ?4")
+	List<Integer> getIdJadwal(Time jamAbsensi, Date tglPengganti, String namaMatkul, String kdKelas);
 }

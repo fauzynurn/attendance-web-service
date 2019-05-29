@@ -1,18 +1,13 @@
 package com.attendance.webservice.repository;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.attendance.webservice.model.BeritaAcara;
 
 @Repository("BeritaAcaraRepository")
-public interface BeritaAcaraRepository extends JpaRepository<BeritaAcara, Serializable> {	
-	@Query("SELECT jk.idJadwal " +
-			"FROM JadwalKuliah jk INNER JOIN jk.matkul mk INNER JOIN jk.kelas k " +
-			"WHERE jk.matkul.namaMatkul = ?1 AND jk.kelas.kdKelas = ?2 AND jk.hari = ?3")
-	List<Integer> fetchIdJadwal(String namaMatkul, String kdKelas, String hari);
+public interface BeritaAcaraRepository extends JpaRepository<BeritaAcara, Serializable> {
+
 }

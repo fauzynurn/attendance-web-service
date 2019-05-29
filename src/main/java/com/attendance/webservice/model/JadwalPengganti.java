@@ -31,9 +31,6 @@ public class JadwalPengganti {
 	@Column(name = "TGL_PENGGANTI")
 	private Date tglPengganti;
 	
-	@Column(name = "SELESAI")
-	private boolean selesai;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_JADWAL")
 	@Fetch(FetchMode.JOIN)
@@ -56,15 +53,21 @@ public class JadwalPengganti {
 		
 	}
 	
-	public JadwalPengganti(Date tglKuliah, Date tglPengganti, boolean selesai, JadwalKuliah jadwalKuliah, Jam jam,
-			Ruangan ruangan) {
+	public JadwalPengganti(Date tglKuliah, Date tglPengganti, JadwalKuliah jadwalKuliah, Jam jam, Ruangan ruangan) {
 		super();
 		this.tglKuliah = tglKuliah;
 		this.tglPengganti = tglPengganti;
-		this.selesai = selesai;
 		this.jadwalKuliah = jadwalKuliah;
 		this.jam = jam;
 		this.ruangan = ruangan;
+	}
+	
+	public int getIdPengganti() {
+		return idPengganti;
+	}
+	
+	public void setIdPengganti(int idPengganti) {
+		this.idPengganti = idPengganti;
 	}
 	
 	public Date getTglKuliah() {
@@ -81,14 +84,6 @@ public class JadwalPengganti {
 	
 	public void setTglPengganti(Date tglPengganti) {
 		this.tglPengganti = tglPengganti;
-	}
-	
-	public boolean getSelesai() {
-		return selesai;
-	}
-	
-	public void setSelesai(boolean selesai) {
-		this.selesai = selesai;
 	}
 	
 	public JadwalKuliah getJadwalKuliah() {

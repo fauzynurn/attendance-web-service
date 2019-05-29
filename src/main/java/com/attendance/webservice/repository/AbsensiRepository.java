@@ -39,6 +39,4 @@ public interface AbsensiRepository extends JpaRepository<Absensi, Serializable> 
 			"FROM Absensi a " +
 			"WHERE a.mhs.nim = ?1 AND a.beritaAcara.idBerita = ?2")
 	Integer fetchIdAbsensi(String nim, int idBerita);
-	
-	Absensi save(Absensi absensi);
 }
