@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,28 +48,39 @@ public class BeritaAcaraController {
 		List<BeritaAcara> berita = new ArrayList<>();
 		List<Absensi> absensi = new ArrayList<>();
 		
-		LocalDate now = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		String hari = now.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
+		LocalDate tgl1 = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		String hari = tgl1.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
+		
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		Date tgl = sdf1.parse(request.get("tgl"));
-		tgl = sdf2.parse(sdf2.format(tgl));
-		SimpleDateFormat sdftime = new SimpleDateFormat("HH:mm:ss");
-		Time jam = new Time(sdftime.parse(request.get("jam")).getTime());
+		java.util.Date tgl2 = sdf1.parse(request.get("tgl"));
+		tgl2 = sdf2.parse(sdf2.format(tgl2));
+		java.sql.Date tglKuliah = new java.sql.Date(tgl2.getTime());
 		
-		long d = tgl.getTime() / 86400000l * 86400000l;
-		long t = jam.getTime() - (jam.getTime() / 86400000l * 86400000l);
-		Timestamp tglAbsensi = new Timestamp(d + t);
+		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
+		Time jamAbsensi = new Time(sdf3.parse(request.get("jam")).getTime());
 		
-		List<Integer> idJadwal = penggantiRepository.getIdJadwal(jam, tgl, request.get("namaMatkul"), request.get("kdKelas"));
+		Calendar calendarDate = Calendar.getInstance();
+		Calendar calendarTime = Calendar.getInstance();
+		calendarDate.setTime(tgl2);
+		calendarTime.setTime(jamAbsensi);
+		calendarDate.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
+		calendarDate.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
+		calendarDate.set(Calendar.SECOND, calendarTime.get(Calendar.SECOND));
+		Timestamp tglAbsensi = new Timestamp(calendarDate.getTimeInMillis());
+		
+		List<Integer> idJadwal = penggantiRepository.getIdPengganti(jamAbsensi, tglKuliah, request.get("kdKelas"),
+				request.get("kdMatkul"));
 		
 		if(idJadwal.isEmpty()) {
-			idJadwal = jadwalRepository.getIdJadwal(tgl, jam, request.get("namaMatkul"), request.get("kdKelas"), hari);
+			idJadwal = jadwalRepository.getIdJadwal(tglKuliah, jamAbsensi, hari, request.get("kdKelas"),
+					request.get("kdMatkul"));
 			for(int i = 0; i < idJadwal.size(); i++) {
 				BeritaAcara brt = new BeritaAcara();
 				JadwalKuliah jdwl = new JadwalKuliah();
-				brt.setTglAbsensi(tglAbsensi);
 				jdwl.setIdJadwal(idJadwal.get(i));
+				
+				brt.setTglAbsensi(tglAbsensi);
 				brt.setJadwalKuliah(jdwl);
 				berita.add(brt);
 			}
@@ -77,13 +88,13 @@ public class BeritaAcaraController {
 			for(int i = 0; i < idJadwal.size(); i++) {
 				BeritaAcara brt = new BeritaAcara();
 				JadwalPengganti jdwl = new JadwalPengganti();
-				brt.setTglAbsensi(tglAbsensi);
 				jdwl.setIdPengganti(idJadwal.get(i));
+				
+				brt.setTglAbsensi(tglAbsensi);
 				brt.setJadwalPengganti(jdwl);
 				berita.add(brt);
 			}
 		}
-		
 		beritaRepository.saveAll(berita);
 		
 		List<String> nim = mhsRepository.getNimByKelas(request.get("kdKelas"));
@@ -92,16 +103,15 @@ public class BeritaAcaraController {
 				Absensi abs = new Absensi();
 				Mahasiswa mhs = new Mahasiswa();
 				BeritaAcara brt = new BeritaAcara();
-				
 				brt.setIdBerita(item.getIdBerita());
 				mhs.setNim(nim.get(i));
+				
 				abs.setStatusKehadiran(4);
 				abs.setBeritaAcara(brt);
 				abs.setMhs(mhs);
 				absensi.add(abs);
 			}
 		}
-		
 		absensiRepository.saveAll(absensi);
 		
         map.put("status","200");

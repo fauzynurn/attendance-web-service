@@ -2,7 +2,7 @@ package com.attendance.webservice.controller;
 
 import java.security.PublicKey;
 import java.security.Signature;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +23,8 @@ public class MahasiswaController {
 	private PublicKey savedPubKey;
 	
 	@PostMapping("/checkmhs")
-	public Map<String, String> checkMhs(@RequestBody HashMap<String, String> request) {
-		HashMap<String, String> map = new HashMap<>();
+	public Map<String, String> checkMhs(@RequestBody Map<String, String> request) {
+		Map<String, String> map = new LinkedHashMap<>();
         Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
     	if(mhs == null) {
     		map.put("status", "404");
@@ -51,30 +51,9 @@ public class MahasiswaController {
         return map;
 	}
 
-//	@PostMapping("/handlevalidate")
-//	public Map<String, String> testingPurposeOnly(@RequestBody HashMap<String, String> req){
-//		HashMap<String, String> map = new HashMap<>();
-//		if(req.get("nim").equals("161511049")) {
-//			map.put("status", "200");
-//			map.put("message", "User is not active");
-//			return map;
-//		}
-//		map.put("status", "200");
-//		map.put("message", "User is active");
-//		return map;
-//	}
-//
-//	@PostMapping("/handleregister")
-//	public Map<String, String> testingPurposeOnly1(@RequestBody HashMap<String, String> req) {
-//		HashMap<String, String> map = new HashMap<>();
-//			map.put("status", "200");
-//			map.put("message", "3B");
-//			return map;
-//	}
-
 	@PostMapping("/registermhs")
-	public Map<String, String> registerMhs(@RequestBody HashMap<String, String> request) {
-		HashMap<String, String> map = new HashMap<>();
+	public Map<String, String> registerMhs(@RequestBody Map<String, String> request) {
+		Map<String, String> map = new LinkedHashMap<>();
         Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
         mhs.setPubKeyMhs(request.get("publicKey"));
         mhs.setImeiMhs(request.get("imei"));
@@ -88,12 +67,12 @@ public class MahasiswaController {
 	@CrossOrigin
     @PostMapping("/attendancesign")
     public Map<String, String> decrypt(@RequestBody Sign sign) {
-        HashMap<String, String> map = new HashMap<>();
+        Map<String, String> map = new LinkedHashMap<>();
         try {
             Signature verificationFunction = Signature.getInstance("SHA1WithRSA");
             verificationFunction.initVerify(savedPubKey);
             verificationFunction.update(sign.getData().getBytes());
-            if (verificationFunction.verify(Base64.decode(sign.getSignature(), 0))) {
+            if(verificationFunction.verify(Base64.decode(sign.getSignature(), 0))) {
                 map.put("responseFromServer", "It's from server. You're verified!");
             } else {
                 map.put("responseFromServer", "You're not verified!!");

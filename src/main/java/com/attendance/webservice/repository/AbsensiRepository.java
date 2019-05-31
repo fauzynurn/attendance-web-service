@@ -1,8 +1,8 @@
 package com.attendance.webservice.repository;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Time;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,29 +14,34 @@ import com.attendance.webservice.model.Absensi;
 
 @Repository("AbsensiRepository")
 public interface AbsensiRepository extends JpaRepository<Absensi, Serializable> {
-	@Query("SELECT a.beritaAcara.jadwalKuliah.matkul.namaMatkul AS namaMatkul, " +
-			"a.beritaAcara.jadwalKuliah.matkul.jenisMatkul AS jenisMatkul, " +
+	@Query("SELECT jk.matkul.namaMatkul AS namaMatkul, jk.matkul.jenisMatkul AS jenisMatkul, " +
 			"CAST(SUM(CASE WHEN a.statusKehadiran = 1 THEN 1 ELSE 0 END) AS char) AS hadir, " +
 			"CAST(SUM(CASE WHEN a.statusKehadiran != 1 THEN 1 ELSE 0 END) AS char) AS tidakHadir " +
 			"FROM Absensi a " +
+			"LEFT JOIN a.beritaAcara.jadwalPengganti jp " +
+			"INNER JOIN JadwalKuliah jk ON jk.idJadwal = a.beritaAcara.jadwalKuliah.idJadwal " +
+			"OR jk.idJadwal = jp.jadwalKuliah.idJadwal " +
 			"WHERE a.mhs.nim = ?1 " +
-			"GROUP BY a.beritaAcara.jadwalKuliah.matkul.idMatkul")
+			"GROUP BY jk.matkul.idMatkul " +
+			"ORDER BY jk.matkul.kdMatkul")
 	List<Map> getKehadiran(String nim);
 	
 	@Query("SELECT SUM(CASE WHEN a.statusKehadiran = 2 THEN 1 ELSE 0 END) AS sakit, " +
 			"SUM(CASE WHEN a.statusKehadiran = 3 THEN 1 ELSE 0 END) AS izin, " +
 			"SUM(CASE WHEN a.statusKehadiran = 4 THEN 1 ELSE 0 END) AS alpa " +
-			"FROM Absensi a WHERE a.mhs.nim = ?1")
+			"FROM Absensi a " +
+			"WHERE a.mhs.nim = ?1")
 	Map<String, String> getKetidakhadiran(String nim);
 	
-	@Query("SELECT ba.idBerita " +
-			"FROM BeritaAcara ba INNER JOIN ba.jadwalKuliah jk INNER JOIN jk.matkul mk INNER JOIN jk.jam j " +
-			"INNER JOIN jk.kelas k INNER JOIN k.mhs m " +
-			"WHERE mk.namaMatkul = ?1 AND ba.tglAbsensi = ?2 AND j.jamMulai <= ?3 AND j.jamSelesai > ?3 AND m.nim = ?4")
-	Integer fetchIdBerita(String namaMatkul, Date tglAbsensi, Time jam, String nim);
-	
-	@Query("SELECT a.idAbsensi " +
+	@Query("SELECT a " +
 			"FROM Absensi a " +
-			"WHERE a.mhs.nim = ?1 AND a.beritaAcara.idBerita = ?2")
-	Integer fetchIdAbsensi(String nim, int idBerita);
+			"WHERE DATE(a.beritaAcara.tglAbsensi) = ?1 AND a.beritaAcara.jadwalKuliah.jam.jamMulai <= ?2 " +
+			"AND a.beritaAcara.jadwalKuliah.jam.jamSelesai > ?2 AND a.mhs.nim = ?3")
+	Absensi getAbsensiKuliah(Date tglAbsensi, Time jamAbsensi, String nim);
+	
+	@Query("SELECT a " +
+			"FROM Absensi a " +
+			"WHERE DATE(a.beritaAcara.tglAbsensi) = ?1 AND a.beritaAcara.jadwalPengganti.jam.jamMulai <= ?2 " +
+			"AND a.beritaAcara.jadwalPengganti.jam.jamSelesai > ?2 AND a.mhs.nim = ?3")
+	Absensi getAbsensiPengganti(Date tglAbsensi, Time jamAbsensi, String nim);
 }

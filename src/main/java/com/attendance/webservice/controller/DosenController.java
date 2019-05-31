@@ -1,6 +1,6 @@
 package com.attendance.webservice.controller;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,15 @@ public class DosenController {
 	DosenRepository dosenRepository;
 	
 	@PostMapping("/checkdosen")
-	public Map<String, String> checkDosen(@RequestBody HashMap<String, String> request) {
-		HashMap<String, String> map = new HashMap<>();
-        Dosen dsn = dosenRepository.findByKdDosen(request.get("kdDosen"));
-    	if(dsn == null) {
+	public Map<String, String> checkDosen(@RequestBody Map<String, String> request) {
+		Map<String, String> map = new LinkedHashMap<>();
+        Dosen dosen = dosenRepository.findByKdDosen(request.get("kdDosen"));
+    	if(dosen == null) {
     		map.put("status", "404");
     		map.put("message", "User is not recognized");
     	} else {
-    		if(dsn.getPasswordDosen().equals(request.get("password"))) {
-    			if(dsn.getImeiDosen() != null) {
+    		if(dosen.getPasswordDosen().equals(request.get("password"))) {
+    			if(dosen.getImeiDosen() != null) {
     				map.put("status", "200");
     				map.put("message", "User is active");
     			} else {
@@ -41,12 +41,12 @@ public class DosenController {
 	}
 
 	@PostMapping("/registerdosen")
-	public Map<String, String> registerDosen(@RequestBody HashMap<String, String> request) {
-		HashMap<String, String> map = new HashMap<>();
-        Dosen dsn = dosenRepository.findByKdDosen(request.get("kdDosen"));
-        dsn.setPubKeyDosen(request.get("publicKey"));
-        dsn.setImeiDosen(request.get("imei"));
-        dosenRepository.save(dsn);
+	public Map<String, String> registerDosen(@RequestBody Map<String, String> request) {
+		Map<String, String> map = new LinkedHashMap<>();
+        Dosen dosen = dosenRepository.findByKdDosen(request.get("kdDosen"));
+        dosen.setPubKeyDosen(request.get("publicKey"));
+        dosen.setImeiDosen(request.get("imei"));
+        dosenRepository.save(dosen);
         
         map.put("status","200");
         map.put("message", "Success");
