@@ -2,7 +2,9 @@ package com.attendance.webservice.controller;
 
 import java.security.PublicKey;
 import java.security.Signature;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +32,17 @@ public class MahasiswaController {
     		map.put("status", "404");
     		map.put("message", "User is not recognized");
     	} else {
-    		if(mhs.getPasswordMhs().equals(request.get("password"))) {
-    			if(mhs.getImeiMhs() != null) {
-    				if(mhs.getImeiMhs().equals(request.get("imei"))) {
-						map.put("status", "200");
-						map.put("message", "Imei match");
-					} else {
-						map.put("status", "200");
-						map.put("message", "User is active");
-					}
-    			} else {
-    				map.put("status", "200");
-    				map.put("message", "User is not active");
-    			}
+    		if(mhs.getImeiMhs() != null) {
+    			if(mhs.getImeiMhs().equals(request.get("imei"))) {
+					map.put("status", "200");
+					map.put("message", "Imei match");
+				} else {
+					map.put("status", "200");
+					map.put("message", "User is active");
+				}
     		} else {
-    			map.put("status", "404");
-        		map.put("message", "User is not recognized");
+    			map.put("status", "200");
+    			map.put("message", "User is not active");
     		}
 		}
         return map;
@@ -82,5 +79,10 @@ public class MahasiswaController {
             map.put("responseFromServer", e.toString());
             return map;
         }
+	}
+	
+	@PostMapping("/getmhs")
+	public List<Map> getMhs(@RequestBody HashMap<String, String> request) {
+        return mhsRepository.getMhsByKelas(request.get("kdKelas"));
 	}
 }

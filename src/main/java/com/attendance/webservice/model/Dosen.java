@@ -25,12 +25,9 @@ public class Dosen {
 	
 	@Column(name = "PASSWORD_DOSEN")
 	private String passwordDosen;
-	
+
 	@Column(name = "IMEI_DOSEN")
 	private String imeiDosen;
-	
-	@Column(name = "PUBLIC_KEY_DOSEN")
-	private String pubKeyDosen;
 	
 	@ManyToMany
 	@JoinTable(
@@ -43,13 +40,12 @@ public class Dosen {
 		
 	}
 	
-	public Dosen(String kdDosen, String namaDosen, String passwordDosen, String imeiDosen, String pubKeyDosen) {
+	public Dosen(String kdDosen, String namaDosen, String passwordDosen, String imeiDosen) {
 		super();
 		this.kdDosen = kdDosen;
 		this.namaDosen = namaDosen;
 		this.passwordDosen = passwordDosen;
 		this.imeiDosen = imeiDosen;
-		this.pubKeyDosen = pubKeyDosen;
 	}
 	
 	public String getKdDosen() {
@@ -82,13 +78,5 @@ public class Dosen {
 	
 	public void setImeiDosen(String imeiDosen) {
 		this.imeiDosen = imeiDosen;
-	}
-	
-	public String getPubKeyDosen() {
-		return pubKeyDosen;
-	}
-	
-	public void setPubKeyDosen(String pubKeyDosen) {
-		this.pubKeyDosen = pubKeyDosen;
 	}
 }

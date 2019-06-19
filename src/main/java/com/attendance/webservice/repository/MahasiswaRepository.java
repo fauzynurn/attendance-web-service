@@ -2,6 +2,7 @@ package com.attendance.webservice.repository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,15 @@ public interface MahasiswaRepository extends JpaRepository<Mahasiswa, Serializab
 			"WHERE m.kelas.kdKelas = ?1 " +
 			"ORDER BY m.nim")
 	List<String> getNimByKelas(String kdKelas);
+	
+	@Query("SELECT m.nim, m.namaMhs, m.passwordMhs " +
+			"FROM Mahasiswa m " +
+			"WHERE m.kelas.kdKelas = ?1 " +
+			"ORDER BY m.nim")
+	List<Map> getMhsByKelas(String kdKelas);
+	
+	@Query("SELECT m.kelas.kdKelas " +
+			"FROM Mahasiswa m " +
+			"WHERE m.nim = ?1")
+	String getKdKelas(String nim);
 }
