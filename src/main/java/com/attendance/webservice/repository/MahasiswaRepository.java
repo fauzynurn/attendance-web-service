@@ -14,20 +14,9 @@ import com.attendance.webservice.model.Mahasiswa;
 public interface MahasiswaRepository extends JpaRepository<Mahasiswa, Serializable> {
 	Mahasiswa findByNim(String nim);
 	
-	@Query("SELECT m.nim " +
+	@Query("SELECT m " +
 			"FROM Mahasiswa m " +
 			"WHERE m.kelas.kdKelas = ?1 " +
 			"ORDER BY m.nim")
-	List<String> getNimByKelas(String kdKelas);
-	
-	@Query("SELECT m.nim, m.namaMhs, m.passwordMhs " +
-			"FROM Mahasiswa m " +
-			"WHERE m.kelas.kdKelas = ?1 " +
-			"ORDER BY m.nim")
-	List<Map> getMhsByKelas(String kdKelas);
-	
-	@Query("SELECT m.kelas.kdKelas " +
-			"FROM Mahasiswa m " +
-			"WHERE m.nim = ?1")
-	String getKdKelas(String nim);
+	List<Mahasiswa> getListMhs(String kdKelas);
 }

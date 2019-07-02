@@ -28,18 +28,6 @@ public class BeritaAcara {
 	@Column(name = "TGL_ABSENSI")
 	private Timestamp tglAbsensi;
 	
-//	@Column(name = "TATAP_MUKA")
-//	private String tatapMuka;
-//	
-//	@Column(name = "TUGAS_TERSTRUKTUR")
-//	private String tgsTerstruktur;
-//	
-//	@Column(name = "PARAF_DOSEN")
-//	private boolean parafDosen;
-//	
-//	@Column(name = "PARAF_KETUA_KELAS")
-//	private boolean parafKetuaKelas;
-	
 	@Column(name = "PARAF_DOSEN_WALI")
 	private boolean parafDosenWali;
 
@@ -67,10 +55,6 @@ public class BeritaAcara {
 			JadwalPengganti jadwalPengganti) {
 		super();
 		this.tglAbsensi = tglAbsensi;
-//		this.tatapMuka = tatapMuka;
-//		this.tgsTerstruktur = tgsTerstruktur;
-//		this.parafDosen = parafDosen;
-//		this.parafKetuaKelas = parafKetuaKelas;
 		this.parafDosenWali = parafDosenWali;
 		this.parafKaprod = parafKaprod;
 		this.jadwalKuliah = jadwalKuliah;
@@ -92,38 +76,6 @@ public class BeritaAcara {
 	public void setTglAbsensi(Timestamp tglAbsensi) {
 		this.tglAbsensi = tglAbsensi;
 	}
-	
-//	public String getTatapMuka() {
-//		return tatapMuka;
-//	}
-//	
-//	public void setTatapMuka(String tatapMuka) {
-//		this.tatapMuka = tatapMuka;
-//	}
-//	
-//	public String getTgsTerstruktur() {
-//		return tgsTerstruktur;
-//	}
-//	
-//	public void setTgsTerstruktur(String tgsTerstruktur) {
-//		this.tgsTerstruktur = tgsTerstruktur;
-//	}
-//	
-//	public boolean getParafDosen() {
-//		return parafDosen;
-//	}
-//	
-//	public void setParafDosen(boolean parafDosen) {
-//		this.parafDosen = parafDosen;
-//	}
-//	
-//	public boolean getKetuaKelas() {
-//		return parafKetuaKelas;
-//	}
-//	
-//	public void setParafKetuaKelas(boolean parafKetuaKelas) {
-//		this.parafKetuaKelas = parafKetuaKelas;
-//	}
 	
 	public boolean getParafDosenWali() {
 		return parafDosenWali;

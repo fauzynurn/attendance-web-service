@@ -50,8 +50,8 @@ public class BeritaAcaraController {
 	@PostMapping("/mulaikbm")
 	public Map<String, String> mulaiKbm(@RequestBody Map<String, String> request) throws ParseException {
 		Map<String, String> map = new LinkedHashMap<>();
-		List<BeritaAcara> berita = new ArrayList<>();
-		List<Absensi> absensi = new ArrayList<>();
+		List<BeritaAcara> listBerita = new ArrayList<>();
+		List<Absensi> listAbsensi = new ArrayList<>();
 		
 		LocalDate tgl1 = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		String hari = tgl1.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
@@ -60,10 +60,10 @@ public class BeritaAcaraController {
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
 		java.util.Date tgl2 = sdf1.parse(request.get("tgl"));
 		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tglKuliah = new java.sql.Date(tgl2.getTime());
+		java.sql.Date tgl = new java.sql.Date(tgl2.getTime());
 		
 		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
-		Time jam = new Time(sdf3.parse(request.get("jam")).getTime());
+		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
 		
 		Calendar calendarDate = Calendar.getInstance();
 		Calendar calendarTime = Calendar.getInstance();
@@ -74,116 +74,105 @@ public class BeritaAcaraController {
 		calendarDate.set(Calendar.SECOND, calendarTime.get(Calendar.SECOND));
 		Timestamp tglAbsensi = new Timestamp(calendarDate.getTimeInMillis());
 		
-		List<Integer> idJadwal = penggantiRepository.getIdPengganti(jam, tglKuliah, request.get("kdKelas"),
-				request.get("kdMatkul"));
-		
-		if(idJadwal.isEmpty()) {
-			idJadwal = jadwalRepository.getIdJadwal(tglKuliah, jam, hari, request.get("kdKelas"), request.get("kdMatkul"));
-			for(int i = 0; i < idJadwal.size(); i++) {
-				BeritaAcara brt = new BeritaAcara();
-				JadwalKuliah jdwl = new JadwalKuliah();
-				jdwl.setIdJadwal(idJadwal.get(i));
+		List<JadwalPengganti> listPengganti = new ArrayList<>();
+		List<JadwalKuliah> listKuliah = new ArrayList<>();
+		listPengganti = penggantiRepository.getListJadwalByMatkul(tgl, jam, request.get("kdKelas"),
+				request.get("kdMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
+		if(listPengganti.isEmpty()) {
+			listKuliah = jadwalRepository.getListJadwalByJam(tgl, hari, jam, request.get("kdKelas"),
+					request.get("kdMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
+			if(!listKuliah.get(0).getRuangan().getKdRuangan().equals(request.get("kdRuangan"))) {
+				for(JadwalKuliah item : listKuliah) {
+					JadwalPengganti pengganti = new JadwalPengganti();
+					JadwalKuliah kuliah = new JadwalKuliah();
+					Jam j = new Jam();
+					Ruangan ruangan = new Ruangan();
+					
+					kuliah.setIdJadwal(item.getIdJadwal());
+					j.setJamKe(item.getJam().getJamKe());
+					ruangan.setKdRuangan(request.get("kdRuangan"));
 				
-				brt.setTglAbsensi(tglAbsensi);
-				brt.setJadwalKuliah(jdwl);
-				berita.add(brt);
+					pengganti.setTglKuliah(tgl);
+					pengganti.setTglPengganti(tgl);
+					pengganti.setJadwalKuliah(kuliah);
+					pengganti.setJam(j);
+					pengganti.setRuangan(ruangan);
+					listPengganti.add(pengganti);
+				}
+				penggantiRepository.saveAll(listPengganti);
 			}
 		} else {
-			for(int i = 0; i < idJadwal.size(); i++) {
-				BeritaAcara brt = new BeritaAcara();
-				JadwalPengganti jdwl = new JadwalPengganti();
-				jdwl.setIdPengganti(idJadwal.get(i));
+			if(!listPengganti.get(0).getRuangan().getKdRuangan().equals(request.get("kdRuangan"))) {
+				for(JadwalPengganti item : listPengganti) {
+					Ruangan ruangan = new Ruangan();
 				
-				brt.setTglAbsensi(tglAbsensi);
-				brt.setJadwalPengganti(jdwl);
-				berita.add(brt);
+					ruangan.setKdRuangan(request.get("kdRuangan"));			
+					item.setRuangan(ruangan);
+				}
+				penggantiRepository.saveAll(listPengganti);
 			}
 		}
-		beritaRepository.saveAll(berita);
+		listKuliah.clear();
+		listPengganti.clear();
 		
-		List<String> nim = mhsRepository.getNimByKelas(request.get("kdKelas"));
-		for(BeritaAcara item : berita) {
-			for(int i = 0; i < nim.size(); i++) {
-				Absensi abs = new Absensi();
-				Mahasiswa mhs = new Mahasiswa();
-				BeritaAcara brt = new BeritaAcara();
-				brt.setIdBerita(item.getIdBerita());
-				mhs.setNim(nim.get(i));
-				
-				abs.setStatusKehadiran(4);
-				abs.setBeritaAcara(brt);
-				abs.setMhs(mhs);
-				absensi.add(abs);
+		listPengganti = penggantiRepository.getListJadwalByMatkul(tgl, jam, request.get("kdKelas"),
+				request.get("kdMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));						
+		if(listPengganti.isEmpty()) {
+			listKuliah = jadwalRepository.getListJadwalByJam(tgl, hari, jam, request.get("kdKelas"),
+					request.get("kdMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
+			for(JadwalKuliah item : listKuliah) {
+				BeritaAcara berita = new BeritaAcara();
+				JadwalKuliah kuliah = new JadwalKuliah();
+
+				kuliah.setIdJadwal(item.getIdJadwal());
+				berita.setTglAbsensi(tglAbsensi);
+				berita.setJadwalKuliah(kuliah);
+				listBerita.add(berita);
+			}
+		} else {
+			int i = 0;
+			boolean b = true;
+			java.sql.Date tglKuliah = null;
+			while(b && i < listPengganti.size()) {
+				if(listPengganti.get(i).getJam().getJamKe() == jamRepository.getJamKe(jam)) {
+					tglKuliah = listPengganti.get(i).getTglKuliah();
+					b = false;
+				}
+				i++;
+			}
+			for(JadwalPengganti item : listPengganti) {
+				if(item.getTglKuliah().equals(tglKuliah)) {
+					BeritaAcara berita = new BeritaAcara();
+					JadwalPengganti pengganti = new JadwalPengganti();
+
+					pengganti.setIdPengganti(item.getIdPengganti());				
+					berita.setTglAbsensi(tglAbsensi);
+					berita.setJadwalPengganti(pengganti);
+					listBerita.add(berita);	
+				}
 			}
 		}
-		absensiRepository.saveAll(absensi);
+		beritaRepository.saveAll(listBerita);
+		
+		List<Mahasiswa> listMhs = mhsRepository.getListMhs(request.get("kdKelas"));
+		for(BeritaAcara item : listBerita) {
+			for(Mahasiswa itemMhs : listMhs) {
+				Absensi absensi = new Absensi();
+				Mahasiswa mhs = new Mahasiswa();
+				BeritaAcara berita = new BeritaAcara();
+				
+				berita.setIdBerita(item.getIdBerita());
+				mhs.setNim(itemMhs.getNim());
+				absensi.setStatusKehadiran(4);
+				absensi.setBeritaAcara(berita);
+				absensi.setMhs(mhs);
+				listAbsensi.add(absensi);
+			}
+		}
+		absensiRepository.saveAll(listAbsensi);
 		
         map.put("status","200");
         map.put("message", "Success");
 		return map;
-	}
-	
-	@PostMapping("/mulaikbmsementara")
-	public Map<String, String> mulaiKbmSementara(@RequestBody Map<String, String> request) throws ParseException {
-		Map<String, String> map = new LinkedHashMap<>();
-		
-		LocalDate tgl1 = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		String hari = tgl1.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
-		
-		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl2 = sdf1.parse(request.get("tgl"));
-		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tglKuliah = new java.sql.Date(tgl2.getTime());
-		
-		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
-		Time jamMulai = new Time(sdf3.parse(request.get("jamMulai")).getTime());
-		Time jamAbsensi = new Time(sdf3.parse(request.get("jam")).getTime());
-		
-		List<JadwalPengganti> jadwal = penggantiRepository.getJadwalPengganti(jamMulai, tglKuliah, request.get("kdKelas"),
-				request.get("kdMatkul"));
-		
-		if(jadwal.isEmpty()) {
-			List<Integer> idJadwal = jadwalRepository.getIdJadwal(tglKuliah, jamMulai, hari, request.get("kdKelas"),
-					request.get("kdMatkul"));
-			
-			for(int i = 0; i < idJadwal.size(); i++) {
-				JadwalPengganti jdwl = new JadwalPengganti();
-				JadwalKuliah kuliah = new JadwalKuliah();
-				Jam jam = new Jam();
-				Ruangan ruangan = new Ruangan();
-				
-				kuliah.setIdJadwal(idJadwal.get(i));
-				jam.setJamKe(jamRepository.getJamKe(jamAbsensi) + i);
-				ruangan.setKdRuangan(request.get("kdRuangan"));
-			
-				jdwl.setTglKuliah(tglKuliah);
-				jdwl.setTglPengganti(tglKuliah);
-				jdwl.setJadwalKuliah(kuliah);
-				jdwl.setJam(jam);
-				jdwl.setRuangan(ruangan);
-				jadwal.add(jdwl);
-			}
-		} else {
-			int i = 0;
-			for(JadwalPengganti item : jadwal) {
-				Jam jam = new Jam();
-				Ruangan ruangan = new Ruangan();
-				
-				jam.setJamKe(jamRepository.getJamKe(jamAbsensi) + i);
-				ruangan.setKdRuangan(request.get("kdRuangan"));
-			
-				item.setJam(jam);
-				item.setRuangan(ruangan);
-				i++;
-			}
-		}
-		penggantiRepository.saveAll(jadwal);
-		
-		map.put("tgl", request.get("tgl"));
-		map.put("jam", request.get("jam"));
-		map.put("kdMatkul", request.get("kdMatkul"));
-		map.put("kdKelas", request.get("kdKelas"));
-		return this.mulaiKbm(map);
 	}
 }

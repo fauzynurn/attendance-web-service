@@ -26,15 +26,9 @@ public class Mahasiswa {
 	
 	@Column(name = "NAMA_MHS")
 	private String namaMhs;
-	
-	@Column(name = "PASSWORD_MHS")
-	private String passwordMhs;
-	
+		
 	@Column(name = "IMEI_MHS")
 	private String imeiMhs;
-	
-	@Column(name = "PUBLIC_KEY_MHS")
-	private String pubKeyMhs;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "KODE_KELAS")
@@ -48,13 +42,11 @@ public class Mahasiswa {
 		
 	}
 	
-	public Mahasiswa(String nim, String namaMhs, String passwordMhs, String imeiMhs, String pubKeyMhs, Kelas kelas) {
+	public Mahasiswa(String nim, String namaMhs, String imeiMhs, Kelas kelas) {
 		super();
 		this.nim = nim;
 		this.namaMhs = namaMhs;
-		this.passwordMhs = passwordMhs;
 		this.imeiMhs = imeiMhs;
-		this.pubKeyMhs = pubKeyMhs;
 		this.kelas = kelas;
 	}
 	
@@ -73,15 +65,7 @@ public class Mahasiswa {
 	public void setNamaMhs(String namaMhs) {
 		this.namaMhs = namaMhs;
 	}
-	
-	public String getPasswordMhs() {
-		return passwordMhs;
-	}
-	
-	public void setPasswordMhs(String passwordMhs) {
-		this.passwordMhs = passwordMhs;
-	}
-	
+		
 	public String getImeiMhs() {
 		return imeiMhs;
 	}
@@ -89,15 +73,7 @@ public class Mahasiswa {
 	public void setImeiMhs(String imeiMhs) {
 		this.imeiMhs = imeiMhs;
 	}
-	
-	public String getPubKeyMhs() {
-		return pubKeyMhs;
-	}
-	
-	public void setPubKeyMhs(String pubKeyMhs) {
-		this.pubKeyMhs = pubKeyMhs;
-	}
-	
+		
 	public Kelas getKelas() {
 		return kelas;
 	}

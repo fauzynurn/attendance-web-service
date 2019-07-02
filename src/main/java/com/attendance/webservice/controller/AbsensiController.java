@@ -1,25 +1,22 @@
 package com.attendance.webservice.controller;
 
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.webservice.model.Absensi;
+import com.attendance.webservice.model.Mahasiswa;
 import com.attendance.webservice.repository.AbsensiRepository;
 import com.attendance.webservice.repository.JadwalKuliahRepository;
 import com.attendance.webservice.repository.JadwalPenggantiRepository;
@@ -31,205 +28,269 @@ public class AbsensiController {
 	@Autowired
 	AbsensiRepository absensiRepository;
 	@Autowired
-	JadwalPenggantiRepository penggantiRepository;
-	@Autowired
 	JadwalKuliahRepository jadwalRepository;
+	@Autowired
+	JadwalPenggantiRepository penggantiRepository;
 	@Autowired
 	JamRepository jamRepository;
 	@Autowired
 	MahasiswaRepository mhsRepository;
 	
-	@PostMapping("/getkehadiran")
-	public List<Map> getKehadiran(@RequestBody HashMap<String, String> request) {
-		return absensiRepository.getKehadiran(request.get("nim"));
-	}
-	
-	@PostMapping("/getketidakhadiran")
-	public Map<String, String> getKetidakhadiran(@RequestBody HashMap<String, String> request) {
-		return absensiRepository.getKetidakhadiran(request.get("nim"));
-	}
-	
-	@PostMapping("/catatkehadiran")
-	public Map<String, String> catatKehadiran(@RequestBody Map<String, List<Map<String, String>>> request) throws ParseException {
-		Map<String, String> map = new LinkedHashMap<>();
-		List<Map<String, String>> r = request.get("listKehadiran");
-		for(Map<String, String> req : r) {
-		List<Absensi> abs1 = new ArrayList<>();
+	@PostMapping("/getdetailrekap")
+	public Integer getDetailRekap(@RequestBody Map<String, String> request) throws ParseException {
+		List<Map> rekap = new ArrayList<>();
 		
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl = sdf1.parse(req.get("tgl"));
-		tgl = sdf2.parse(sdf2.format(tgl));
-		java.sql.Date tglAbsensi = new java.sql.Date(tgl.getTime());
+		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
+		tgl1 = sdf2.parse(sdf2.format(tgl1));
+		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
 		
-		Absensi absensi = absensiRepository.getAbsensiPengganti(tglAbsensi, Integer.parseInt(req.get("jamKe")),
-				req.get("nim"));
-		if(absensi == null) {
-			absensi = absensiRepository.getAbsensiKuliah(tglAbsensi, Integer.parseInt(req.get("jamKe")), req.get("nim"));
-			if(absensi == null) {
-				map.put("status","404");
-		        map.put("message", "Failed");
-		        return map;
-			} else {
-				Timestamp ts = absensi.getBeritaAcara().getTglAbsensi();
-				Time t = new Time(ts.getTime());
-				int jamKe = jamRepository.getJamKe(t);
-				if(absensi.getBeritaAcara().getJadwalKuliah().getJam().getJamKe() == jamKe) {
-					List<Absensi> abs2 = absensiRepository.getListAbsensiKuliah(tglAbsensi, jamKe, req.get("nim"));
-					if(!abs2.isEmpty()) {
-						for(Absensi item : abs2) {
-							item.setStatusKehadiran(1);
-							abs1.add(item);
-						}
-					}
-				}
-			}
-		} else {
-			Timestamp ts = absensi.getBeritaAcara().getTglAbsensi();
-			Time t = new Time(ts.getTime());
-			int jamKe = jamRepository.getJamKe(t);
-			if(absensi.getBeritaAcara().getJadwalPengganti().getJam().getJamKe() == jamKe) {
-				List<Absensi> abs2 = absensiRepository.getListAbsensiPengganti(tglAbsensi, jamKe, req.get("nim"));
-				if(!abs2.isEmpty()) {
-					for(Absensi item : abs2) {
-						item.setStatusKehadiran(1);
-						abs1.add(item);
-					}
-				}
+		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
+		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
+		Time t1 = new Time(sdf3.parse("07:00:00").getTime());
+		Time t2 = new Time(sdf3.parse("18:20:00").getTime());
+		
+		Integer jamKe = jamRepository.getJamKe(jam);
+		if(jamKe == null) {
+			if(jam.before(t1)) {
+				jamKe = 1;
+			} else if(jam.after(t2)) {
+				jamKe = 12;
 			}
 		}
-		absensi.setStatusKehadiran(1);
-		abs1.add(absensi);
-		absensiRepository.saveAll(abs1);
+		
+		Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
+		List<Map> maps1 = jadwalRepository.getListJadwalByKelas(mhs.getKelas().getKdKelas());
+		List<Map> maps2 = absensiRepository.getRekapKehadiran(request.get("nim"), tgl, jamKe);
+		
+		for(Map item1 : maps1) {
+			Map map = new LinkedHashMap<>();
+				
+			map.put("namaMatkul", item1.get("namaMatkul"));
+			map.put("jenisMatkul", item1.get("jenisMatkul"));
+			map.put("jumlahHadir", item1.get("jumlahHadir"));
+			map.put("jumlahTdkHadir", item1.get("jumlahTdkHadir"));
+			if(!maps2.isEmpty()) {
+				for(Map item2 : maps2) {
+					if(item1.get("namaMatkul").toString().equals((item2.get("namaMatkul").toString())) 
+							&& (boolean) item1.get("jenisMatkul") == (boolean) item2.get("jenisMatkul")) {
+						map.put("jumlahHadir", item2.get("jumlahHadir"));
+						map.put("jumlahTdkHadir", item2.get("jumlahTdkHadir"));	
+					}
+				}
+			}
+			rekap.add(map);
+		}
+		return jamKe;
+	}
+	
+	@PostMapping("/getrekapketidakhadiran")
+	public Map<String, String> getRekapKetidakhadiran(@RequestBody Map<String, String> request) throws ParseException {
+		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
+		tgl1 = sdf2.parse(sdf2.format(tgl1));
+		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
+		
+		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
+		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
+		Time t1 = new Time(sdf3.parse("07:00:00").getTime());
+		Time t2 = new Time(sdf3.parse("18:20:00").getTime());
+		
+		Integer jamKe = jamRepository.getJamKe(jam);
+		if(jamKe == null) {
+			if(jam.before(t1)) {
+				jamKe = 1;
+			} else if(jam.after(t2)) {
+				jamKe = 12;
+			}
+		}
+		
+		Map<String, String> map1 = absensiRepository.getRekapKetidakhadiran(request.get("nim"), tgl, jamKe);
+		if(map1.get("sakit") == null && map1.get("izin") == null && map1.get("alpa") == null) {
+			Map<String, String> map2 = new LinkedHashMap<>();
+			map2.put("sakit", "0");
+			map2.put("izin", "0");
+			map2.put("alpa", "0");
+			return map2;
+		} else {
+			return map1;
+		}
+	}
+	
+	@PutMapping("/catatkehadiran")
+	public Map<String, String> catatKehadiran(@RequestBody Map<String, List<Map<String, String>>> request) throws ParseException {
+		Map<String, String> map = new LinkedHashMap<>();
+		List<Map<String, String>> listRequest = request.get("listKehadiran");
+		
+		for(Map<String, String> r : listRequest) {
+			List<Absensi> listAbsensi = new ArrayList<>();
+		
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+			java.util.Date tgl1 = sdf1.parse(r.get("tgl"));
+			tgl1 = sdf2.parse(sdf2.format(tgl1));
+			java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
+		
+			Absensi absensi = absensiRepository.getAbsensiPengganti(tgl, Integer.parseInt(r.get("jamKe")), r.get("nim"));
+			if(absensi == null) {
+				absensi = absensiRepository.getAbsensiKuliah(tgl, Integer.parseInt(r.get("jamKe")), r.get("nim"));
+				if(absensi == null) {
+					map.put("status","404");
+					map.put("message", "Failed");
+					return map;
+				} else {
+					Time t = new Time(absensi.getBeritaAcara().getTglAbsensi().getTime());
+					int jamKe = jamRepository.getJamKe(t);
+					if(absensi.getBeritaAcara().getJadwalKuliah().getJam().getJamKe() >= jamKe) {
+						if(absensi.getBeritaAcara().getJadwalKuliah().getJam().getJamKe() == jamKe) {
+							List<Absensi> abs = absensiRepository.getListAbsensiByNimKuliah(tgl, jamKe, r.get("nim"));
+							for(Absensi item : abs) {
+								if(item.getBeritaAcara().getTglAbsensi().equals(absensi.getBeritaAcara().getTglAbsensi())) {
+									item.setStatusKehadiran(1);
+									listAbsensi.add(item);	
+								}
+							}
+						} else {
+							absensi.setStatusKehadiran(1);
+							listAbsensi.add(absensi);
+						}
+						absensiRepository.saveAll(listAbsensi);
+					}
+				}
+			} else {
+				Time t = new Time(absensi.getBeritaAcara().getTglAbsensi().getTime());
+				int jamKe = jamRepository.getJamKe(t);
+				if(absensi.getBeritaAcara().getJadwalPengganti().getJam().getJamKe() >= jamKe) {
+					if(absensi.getBeritaAcara().getJadwalPengganti().getJam().getJamKe() == jamKe) {
+						List<Absensi> abs = absensiRepository.getListAbsensiByNimPengganti(tgl, jamKe, r.get("nim"));
+						for(Absensi item : abs) {
+							if(item.getBeritaAcara().getTglAbsensi().equals(absensi.getBeritaAcara().getTglAbsensi())) {
+								item.setStatusKehadiran(1);
+								listAbsensi.add(item);	
+							}
+						}
+					} else {
+						absensi.setStatusKehadiran(1);
+						listAbsensi.add(absensi);
+					}
+					absensiRepository.saveAll(listAbsensi);
+				}
+			}
 		}
 			
-		map.put("status","200");
+		map.put("status", "200");
 	    map.put("message", "Success");
-//		return abs1;
 	    return map;
 	}
 	
 	@PostMapping("/getdaftarhadir")
-	public Map getDaftarHadir(@RequestBody HashMap<String, String> request) throws ParseException {	
+	public Map getDaftarHadir(@RequestBody Map<String, String> request) throws ParseException {	
 		Map map = new LinkedHashMap<>();
-		
-		LocalDate tgl1 = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		String hari = tgl1.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
-		
+		List<Map> maps = new ArrayList<>();
+				
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl2 = sdf1.parse(request.get("tgl"));
-		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tglKuliah = new java.sql.Date(tgl2.getTime());
+		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
+		tgl1 = sdf2.parse(sdf2.format(tgl1));
+		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
 		
 		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
-		Time jam = new Time(sdf3.parse(request.get("jamMulai")).getTime());
-		Time jam2 = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
+		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
 		
-		List<Map<String, Integer>> idJadwal = penggantiRepository.getIdPenggantiJamKe(jam, tglKuliah, request.get("kdKelas"),
-				request.get("kdMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
-		int jamKe = jamRepository.getJamKe(jam2);
-		
-		if(idJadwal.isEmpty()) {
-			idJadwal = jadwalRepository.getIdJadwalJamKe(tglKuliah, jam, hari, request.get("kdKelas"), request.get("kodeMatkul"),
-					Boolean.parseBoolean(request.get("jenisMatkul")));
-			
-			for(Map<String, Integer> item : idJadwal) {
-				if((int) item.get("jamKe") == jamKe) {
-					map.put("jamKe", item.get("jamKe"));
-					map.put("statusKehadiran", absensiRepository.getStatusKehadiranKuliah((int) item.get("idJadwal")));
-					return map;
-				} else {
-					map.put("jamKe", item.get("jamKe"));
-					map.put("mhsList", absensiRepository.getStatusKehadiranKuliah((int) item.get("idJadwal")));
-				}
-			}
-			return map;
-		} else {			
-			for(Map<String, Integer> item : idJadwal) {
-				if((int) item.get("jamKe") == jamKe) {
-					map.put("jamKe", item.get("jamKe"));
-					map.put("statusKehadiran", absensiRepository.getStatusKehadiranPengganti((int) item.get("idPengganti")));
-					return map;
-				} else {
-					map.put("jamKe", item.get("jamKe"));
-					map.put("statusKehadiran", absensiRepository.getStatusKehadiranPengganti((int) item.get("idPengganti")));
-				}
-			}
-			return map;
+		int jamKe = jamRepository.getJamKe(jam);
+		List<Absensi> absensi = absensiRepository.getListAbsensiByKelasPengganti(tgl, jamKe, request.get("kdKelas"));
+		if(absensi.isEmpty()) {
+			absensi = absensiRepository.getListAbsensiByKelasKuliah(tgl, jamKe, request.get("kdKelas"));
 		}
+		
+		for(Absensi item : absensi) {
+			Map abs = new LinkedHashMap<>();
+			abs.put("namaMhs", item.getMhs().getNamaMhs());
+			if(item.getStatusKehadiran() == 1) {
+				abs.put("status", true);
+			} else {
+				abs.put("status", false);
+			}
+			maps.add(abs);
+		}
+		
+		map.put("jamKe", jamKe);
+		map.put("mhsList", maps);		
+		return map;
 	}
 	
-	@PostMapping("/getdetailjadwal")
-	public List<Map> getDetailJadwal(@RequestBody HashMap<String, String> request) throws ParseException {
-		LocalDate tgl1 = LocalDate.parse(request.get("tgl"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-		String hari = tgl1.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
+	@CrossOrigin
+	@PostMapping("/getabsensiharian")
+	public List<Map<String, String>> getAbsensiHarian(@RequestBody Map<String, String> request) throws ParseException {
+		List<Map<String, String>> maps = new ArrayList<>();
 		
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl2 = sdf1.parse(request.get("tgl"));
-		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tglKuliah = new java.sql.Date(tgl2.getTime());
+		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
+		tgl1 = sdf2.parse(sdf2.format(tgl1));
+		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
 		
-		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
-		Time jam = new Time(sdf3.parse(request.get("jamMulai")).getTime());
+		List<Absensi> absensi = absensiRepository.getListAbsensiByKelasPengganti(tgl, Integer.parseInt(request.get("jamKe")),
+				request.get("kdKelas"));
+		if(absensi.isEmpty()) {
+			absensi = absensiRepository.getListAbsensiByKelasKuliah(tgl, Integer.parseInt(request.get("jamKe")),
+					request.get("kdKelas"));
+		}
 		
-		String kdKelas = mhsRepository.getKdKelas(request.get("nim"));
-		List<Map<String, Integer>> idJadwal = penggantiRepository.getIdPenggantiJamKe(jam, tglKuliah, kdKelas,
-				request.get("kdMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
+		for(Absensi item : absensi) {
+			Map<String, String> map = new LinkedHashMap<>();
 
-		if(idJadwal.isEmpty()) {
-			idJadwal = jadwalRepository.getIdJadwalJamKe(tglKuliah, jam, hari, kdKelas, request.get("kdMatkul"),
-					Boolean.parseBoolean(request.get("jenisMatkul")));
-			List<Integer> id = new ArrayList<>();
-			for(Map<String, Integer> item : idJadwal) {
-				id.add((int) item.get("idJadwal"));
+			map.put("nim", item.getMhs().getNim());
+			map.put("namaMhs", item.getMhs().getNamaMhs());
+			switch(item.getStatusKehadiran()) {
+				case 1:
+					map.put("statusKehadiran", "Hadir");
+					break;
+				case 2:
+					map.put("statusKehadiran", "Sakit");
+					break;
+				case 3:
+					map.put("statusKehadiran", "Izin");
+					break;
+				case 4:
+					map.put("statusKehadiran", "Alpa");
+					break;
 			}
-			
-			return absensiRepository.getStatusMhsKuliah(id, request.get("nim"));
-		} else {
-			List<Integer> id = new ArrayList<>();
-			for(Map<String, Integer> item : idJadwal) {
-				id.add((int) item.get("idPengganti"));
-			}
-			
-			return absensiRepository.getStatusMhsPengganti(id, request.get("nim"));
+			maps.add(map);
 		}
-	}
-	
-	@GetMapping("/getabsensiharian")
-	public List<Map<String, String>> getAbsensiHarian(@RequestBody Map<String, String> request) throws ParseException {		
-		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl2 = sdf1.parse(request.get("tgl"));
-		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tgl = new java.sql.Date(tgl2.getTime());
 		
-		return absensiRepository.getListAbsensiHarian(request.get("kdKelas"), tgl, Integer.parseInt(request.get("jamKe")));
+		return maps;
 	}
 	
-//	@CrossOrigin
-	@PostMapping("/ubahkehadiran")
+	@CrossOrigin
+	@PutMapping("/ubahkehadiran")
 	public Map<String, String> ubahKehadiran(@RequestBody Map<String, String> request) throws ParseException {
 		Map<String, String> map = new LinkedHashMap<>();
+		
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl2 = sdf1.parse(request.get("tanggal"));
-		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tgl = new java.sql.Date(tgl2.getTime());
+		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
+		tgl1 = sdf2.parse(sdf2.format(tgl1));
+		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
 		
-		Absensi absensi = absensiRepository.getAbsensiHarian(request.get("nim"), tgl, Integer.parseInt(request.get("sesi")));
-		switch(request.get("status")) {
-			case "hadir":
+		Absensi absensi = absensiRepository.getAbsensiPengganti(tgl, Integer.parseInt(request.get("jamKe")), request.get("nim"));
+		if(absensi == null) {
+			absensi = absensiRepository.getAbsensiKuliah(tgl, Integer.parseInt(request.get("jamKe")), request.get("nim"));
+		}
+		
+		switch(request.get("statusKehadiran")) {
+			case "Hadir":
 				absensi.setStatusKehadiran(1);
 				break;
-			case "sakit":
+			case "Sakit":
 				absensi.setStatusKehadiran(2);
 				break;
-			case "izin":
+			case "Izin":
 				absensi.setStatusKehadiran(3);
 				break;
-			case "alpa":
+			case "Alpa":
 				absensi.setStatusKehadiran(4);
 				break;
 		}
@@ -238,17 +299,17 @@ public class AbsensiController {
 		map.put("status", "200");
 		map.put("message", "Success");
 		return map;
-//		return absensi;
 	}
 	
-	@GetMapping("/dropdownjamke")
+	@CrossOrigin
+	@PostMapping("/dropdownjamke")
 	public List<Integer> dropdownJamKe(@RequestBody Map<String, String> request) throws ParseException {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl2 = sdf1.parse(request.get("tanggal"));
-		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tgl = new java.sql.Date(tgl2.getTime());
+		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
+		tgl1 = sdf2.parse(sdf2.format(tgl1));
+		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
 		
-		return absensiRepository.dropdownJamKe(request.get("kdKelas"), tgl);
+		return absensiRepository.getListJamKe(tgl, request.get("kdKelas"));
 	}
 }
