@@ -16,11 +16,11 @@ import com.attendance.webservice.model.Jam;
 
 @Repository("JadwalKuliahRepository")
 public interface JadwalKuliahRepository extends JpaRepository<JadwalKuliah, Serializable> {
-	@Query("SELECT jk " +
+	@Query("SELECT MIN(jk) " +
 			"FROM JadwalKuliah jk LEFT JOIN jk.jadwalPengganti jp ON jp.tglKuliah = ?1 " +
 			"WHERE jk.hari = ?2 AND jk.kelas.kdKelas = ?3 AND jp.jadwalKuliah.idJadwal IS NULL " +
 			"GROUP BY jk.matkul.idMatkul " +
-			"ORDER BY jk.jam.jamKe ASC")
+			"ORDER BY MIN(jk.jam.jamKe) ASC")
 	List<JadwalKuliah> getListJadwalMhs(Date tgl, String hari, String kdKelas);
 	
 	@Query("SELECT jk " +
