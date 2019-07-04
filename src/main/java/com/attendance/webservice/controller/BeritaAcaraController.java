@@ -104,10 +104,12 @@ public class BeritaAcaraController {
 		} else {
 			if(!listPengganti.get(0).getRuangan().getKdRuangan().equals(request.get("kdRuangan"))) {
 				for(JadwalPengganti item : listPengganti) {
-					Ruangan ruangan = new Ruangan();
+					if(item.getTglKuliah().equals(listPengganti.get(0).getTglKuliah())) {
+						Ruangan ruangan = new Ruangan();
 				
-					ruangan.setKdRuangan(request.get("kdRuangan"));			
-					item.setRuangan(ruangan);
+						ruangan.setKdRuangan(request.get("kdRuangan"));			
+						item.setRuangan(ruangan);
+					}
 				}
 				penggantiRepository.saveAll(listPengganti);
 			}
@@ -130,18 +132,8 @@ public class BeritaAcaraController {
 				listBerita.add(berita);
 			}
 		} else {
-			int i = 0;
-			boolean b = true;
-			java.sql.Date tglKuliah = null;
-			while(b && i < listPengganti.size()) {
-				if(listPengganti.get(i).getJam().getJamKe() == jamRepository.getJamKe(jam)) {
-					tglKuliah = listPengganti.get(i).getTglKuliah();
-					b = false;
-				}
-				i++;
-			}
 			for(JadwalPengganti item : listPengganti) {
-				if(item.getTglKuliah().equals(tglKuliah)) {
+				if(item.getTglKuliah().equals(listPengganti.get(0).getTglKuliah())) {
 					BeritaAcara berita = new BeritaAcara();
 					JadwalPengganti pengganti = new JadwalPengganti();
 

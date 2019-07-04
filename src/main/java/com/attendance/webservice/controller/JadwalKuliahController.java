@@ -122,7 +122,7 @@ public class JadwalKuliahController {
 			Map<String, String> ruangan = new LinkedHashMap<>();
 			
 			List<Jam> jam = penggantiRepository.getListJam(tgl, mhs.getKelas().getKdKelas(),
-					item.getJadwalKuliah().getMatkul().getIdMatkul());
+					item.getJadwalKuliah().getMatkul().getIdMatkul(), item.getTglKuliah());
 			List<Dosen> dosen = penggantiRepository.getListDosen(item.getIdPengganti());
 			BeritaAcara berita = beritaRepository.getBeritaAcaraPengganti(tgl, item.getIdPengganti());
 			for(Dosen itemDosen : dosen) {
@@ -222,7 +222,7 @@ public class JadwalKuliahController {
 			Map<String, String> ruangan = new LinkedHashMap<>();
 			
 			List<Jam> jam = penggantiRepository.getListJam(tgl, item.getJadwalKuliah().getKelas().getKdKelas(),
-					item.getJadwalKuliah().getMatkul().getIdMatkul());
+					item.getJadwalKuliah().getMatkul().getIdMatkul(), item.getTglKuliah());
 			BeritaAcara berita = beritaRepository.getBeritaAcaraPengganti(tgl, item.getIdPengganti());
 			
 			map.put("namaMatkul", item.getJadwalKuliah().getMatkul().getNamaMatkul());

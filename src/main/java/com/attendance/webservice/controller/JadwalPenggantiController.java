@@ -127,7 +127,7 @@ public class JadwalPenggantiController {
 			BeritaAcara berita = beritaRepository.getBeritaAcaraPengganti(tgl, item.getIdPengganti());
 			if(berita == null) {
 				List<Jam> jam = penggantiRepository.getListJam(tgl, item.getJadwalKuliah().getKelas().getKdKelas(),
-						item.getJadwalKuliah().getMatkul().getIdMatkul());
+						item.getJadwalKuliah().getMatkul().getIdMatkul(), item.getTglKuliah());
 				
 				map.put("tglKuliah", item.getTglKuliah());
 				map.put("tglPengganti", item.getTglPengganti());
