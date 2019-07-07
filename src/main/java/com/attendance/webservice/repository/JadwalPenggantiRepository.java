@@ -46,11 +46,19 @@ public interface JadwalPenggantiRepository extends JpaRepository<JadwalPengganti
 	List<JadwalPengganti> getListJadwalByMatkul(Date tgl, Time jam, String kdKelas, String kdMatkul, boolean jenisMatkul);
 	
 	@Query("SELECT jp " +
-			"FROM JadwalPengganti jp " +
-			"WHERE jp.tglPengganti >= ?1 AND jp.jam.jamKe >= ?2 " +
-			"GROUP BY jp.tglKuliah, jp.jadwalKuliah.matkul.idMatkul " +
+			"FROM JadwalPengganti jp LEFT JOIN jp.beritaAcara ba " +
+			"WHERE jp.tglKuliah = ?1 AND jp.jadwalKuliah.kelas.kdKelas = ?2 AND jp.jadwalKuliah.matkul.namaMatkul = ?3 " +
+			"AND jp.jadwalKuliah.matkul.jenisMatkul = ?4 AND ba.idBerita IS NULL " +
 			"ORDER BY jp.jam.jamKe ASC")
-	List<JadwalPengganti> getListJadwalByJam(Date tgl, int jamKe);
+	List<JadwalPengganti> getListJadwalByTgl(Date tgl, String kdKelas, String namaMatkul, boolean jenisMatkul);
+	
+	@Query("SELECT jp " +
+			"FROM JadwalPengganti jp INNER JOIN jp.jadwalKuliah.dosen d LEFT JOIN jp.beritaAcara ba " +
+			"WHERE ((jp.tglPengganti >= ?1) OR (jp.tglPengganti >= ?1 AND jp.jam.jamKe >= ?2)) AND d.kdDosen = ?3 " +
+			"AND ba.idBerita IS NULL " +
+			"GROUP BY jp.tglKuliah, jp.jadwalKuliah.matkul.idMatkul, jp.jadwalKuliah.kelas.kdKelas " +
+			"ORDER BY jp.tglPengganti ASC, jp.jam.jamKe ASC")
+	List<JadwalPengganti> getListJadwalByJam(Date tgl, int jamKe, String kdDosen);
 	
 	@Query("SELECT d " +
 			"FROM JadwalPengganti jp INNER JOIN jp.jadwalKuliah.dosen d " +

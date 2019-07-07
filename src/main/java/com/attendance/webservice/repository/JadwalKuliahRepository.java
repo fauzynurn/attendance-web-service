@@ -16,11 +16,11 @@ import com.attendance.webservice.model.Jam;
 
 @Repository("JadwalKuliahRepository")
 public interface JadwalKuliahRepository extends JpaRepository<JadwalKuliah, Serializable> {
-	@Query("SELECT MIN(jk) " +
+	@Query("SELECT jk " +
 			"FROM JadwalKuliah jk LEFT JOIN jk.jadwalPengganti jp ON jp.tglKuliah = ?1 " +
 			"WHERE jk.hari = ?2 AND jk.kelas.kdKelas = ?3 AND jp.jadwalKuliah.idJadwal IS NULL " +
 			"GROUP BY jk.matkul.idMatkul " +
-			"ORDER BY MIN(jk.jam.jamKe) ASC")
+			"ORDER BY jk.jam.jamKe ASC")
 	List<JadwalKuliah> getListJadwalMhs(Date tgl, String hari, String kdKelas);
 	
 	@Query("SELECT jk " +
@@ -46,9 +46,10 @@ public interface JadwalKuliahRepository extends JpaRepository<JadwalKuliah, Seri
 	List<JadwalKuliah> getListJadwalByJam(Date tgl, String hari, Time jam, String kdKelas, String kdMatkul, boolean jenisMatkul);
 	
 	@Query("SELECT jk " +
-			"FROM JadwalKuliah jk LEFT JOIN jk.jadwalPengganti jp ON jp.tglKuliah = ?1 " +
+			"FROM JadwalKuliah jk LEFT JOIN jk.jadwalPengganti jp ON jp.tglKuliah = ?1 LEFT JOIN jk.beritaAcara ba " +
+			"ON DATE(ba.tglAbsensi) = ?1 " +
 			"WHERE jk.hari = ?2 AND jk.kelas.kdKelas = ?3 AND jk.matkul.namaMatkul = ?4 AND jk.matkul.jenisMatkul = ?5 " +
-			"AND jp.jadwalKuliah.idJadwal IS NULL " +
+			"AND jp.jadwalKuliah.idJadwal IS NULL AND ba.idBerita IS NULL " +
 			"ORDER BY jk.jam.jamKe ASC")
 	List<JadwalKuliah> getListJadwalByMatkul(Date tgl, String hari, String kdKelas, String namaMatkul, boolean jenisMatkul);
 	
@@ -72,10 +73,11 @@ public interface JadwalKuliahRepository extends JpaRepository<JadwalKuliah, Seri
 			"ORDER BY jk.kelas.kdKelas ASC")
 	List<String> getKdKelas(String kdDosen, int idMatkul);
 	
-	@Query("SELECT COUNT(jk.idJadwal) " +
+	@Query("SELECT jk " +
 			"FROM JadwalKuliah jk " +
-			"WHERE jk.kelas.kdKelas = ?1 AND jk.matkul.namaMatkul = ?2 AND jk.matkul.jenisMatkul = ?3")
-	int getJumlahJam(String kdKelas, String namaMatkul, boolean jenisMatkul);
+			"WHERE jk.kelas.kdKelas = ?1 AND jk.matkul.namaMatkul = ?2 AND jk.matkul.jenisMatkul = ?3 " +
+			"ORDER BY jk.jam.jamKe ASC")
+	List<JadwalKuliah> getListJadwalByKelas(String kdKelas, String namaMatkul, boolean jenisMatkul);
 	
 	@Query("SELECT jk.matkul.namaMatkul AS namaMatkul, jk.matkul.jenisMatkul AS jenisMatkul, " +
 			"'0' AS jumlahHadir, '0' AS jumlahTdkHadir " +

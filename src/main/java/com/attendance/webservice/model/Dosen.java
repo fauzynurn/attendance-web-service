@@ -4,12 +4,14 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -28,6 +30,12 @@ public class Dosen {
 
 	@Column(name = "IMEI_DOSEN")
 	private String imeiDosen;
+	
+	@OneToMany(targetEntity = Kelas.class, mappedBy = "dosen1", orphanRemoval = false, fetch = FetchType.LAZY)
+	private Set<Kelas> kelas1;
+	
+	@OneToMany(targetEntity = Kelas.class, mappedBy = "dosen2", orphanRemoval = false, fetch = FetchType.LAZY)
+	private Set<Kelas> kelas2;
 	
 	@ManyToMany
 	@JoinTable(

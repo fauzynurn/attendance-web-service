@@ -37,8 +37,8 @@ public class AbsensiController {
 	MahasiswaRepository mhsRepository;
 	
 	@PostMapping("/getdetailrekap")
-	public Integer getDetailRekap(@RequestBody Map<String, String> request) throws ParseException {
-		List<Map> rekap = new ArrayList<>();
+	public List<Map> getDetailRekap(@RequestBody Map<String, String> request) throws ParseException {
+		List<Map> maps = new ArrayList<>();
 		
 		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
@@ -48,22 +48,11 @@ public class AbsensiController {
 		
 		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
 		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
-		Time t1 = new Time(sdf3.parse("07:00:00").getTime());
-		Time t2 = new Time(sdf3.parse("18:20:00").getTime());
 		
 		Integer jamKe = jamRepository.getJamKe(jam);
-		if(jamKe == null) {
-			if(jam.before(t1)) {
-				jamKe = 1;
-			} else if(jam.after(t2)) {
-				jamKe = 12;
-			}
-		}
-		
 		Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
 		List<Map> maps1 = jadwalRepository.getListJadwalByKelas(mhs.getKelas().getKdKelas());
 		List<Map> maps2 = absensiRepository.getRekapKehadiran(request.get("nim"), tgl, jamKe);
-		
 		for(Map item1 : maps1) {
 			Map map = new LinkedHashMap<>();
 				
@@ -80,9 +69,9 @@ public class AbsensiController {
 					}
 				}
 			}
-			rekap.add(map);
+			maps.add(map);
 		}
-		return jamKe;
+		return maps;
 	}
 	
 	@PostMapping("/getrekapketidakhadiran")
@@ -95,28 +84,15 @@ public class AbsensiController {
 		
 		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
 		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
-		Time t1 = new Time(sdf3.parse("07:00:00").getTime());
-		Time t2 = new Time(sdf3.parse("18:20:00").getTime());
 		
 		Integer jamKe = jamRepository.getJamKe(jam);
-		if(jamKe == null) {
-			if(jam.before(t1)) {
-				jamKe = 1;
-			} else if(jam.after(t2)) {
-				jamKe = 12;
-			}
+		Map<String, String> map = absensiRepository.getRekapKetidakhadiran(request.get("nim"), tgl, jamKe);
+		if(map.get("sakit") == null && map.get("izin") == null && map.get("alpa") == null) {
+			map.put("sakit", "0");
+			map.put("izin", "0");
+			map.put("alpa", "0");
 		}
-		
-		Map<String, String> map1 = absensiRepository.getRekapKetidakhadiran(request.get("nim"), tgl, jamKe);
-		if(map1.get("sakit") == null && map1.get("izin") == null && map1.get("alpa") == null) {
-			Map<String, String> map2 = new LinkedHashMap<>();
-			map2.put("sakit", "0");
-			map2.put("izin", "0");
-			map2.put("alpa", "0");
-			return map2;
-		} else {
-			return map1;
-		}
+		return map;
 	}
 	
 	@PutMapping("/catatkehadiran")

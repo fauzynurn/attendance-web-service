@@ -3,6 +3,7 @@ package com.attendance.webservice.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,6 @@ public class RuanganController {
 	@CrossOrigin
 	@GetMapping("/getdaftarruangan")
 	public List<Ruangan> getDaftarRuangan() {
-        return ruanganRepository.findAll();
+        return ruanganRepository.findAll(Sort.by(Sort.Direction.ASC, "kdRuangan"));
 	}
 }

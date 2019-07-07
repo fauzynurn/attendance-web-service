@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,21 +55,42 @@ public class JadwalPenggantiController {
 		tgl2 = sdf2.parse(sdf2.format(tgl2));
 		java.sql.Date tglKuliah = new java.sql.Date(tgl2.getTime());
 		
+		tgl2 = sdf1.parse(request.get("tglPengganti"));
+		tgl2 = sdf2.parse(sdf2.format(tgl2));
+		java.sql.Date tglPengganti = new java.sql.Date(tgl2.getTime());
+		
+		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
+		Time jamMulai = new Time(sdf3.parse(request.get("jamMulai")).getTime());
+		
 		List<JadwalKuliah> listKuliah = jadwalRepository.getListJadwalByMatkul(tglKuliah, hari, request.get("kdKelas"),
 				request.get("namaMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
 		
-		if(listKuliah == null) {
-			map.put("status", "404");
-			map.put("message", "Failed");
-			return map;
+		if(listKuliah.isEmpty()) {
+			listPengganti = penggantiRepository.getListJadwalByTgl(tglKuliah, request.get("kdKelas"), request.get("namaMatkul"),
+					Boolean.parseBoolean(request.get("jenisMatkul")));
+			if(listPengganti.isEmpty()) {
+				map.put("status", "404");
+				map.put("message", "Failed");	
+			} else {
+				int i = 0;
+				for(JadwalPengganti item : listPengganti) {
+					Jam jam = new Jam();
+					Ruangan ruangan = new Ruangan();
+					
+					jam.setJamKe(jamRepository.getJamKe(jamMulai) + i);
+					ruangan.setKdRuangan(request.get("kdRuangan"));
+					
+					item.setTglPengganti(tglPengganti);
+					item.setJam(jam);
+					item.setRuangan(ruangan);
+					i++;
+				}
+				penggantiRepository.saveAll(listPengganti);
+				
+				map.put("status", "200");
+				map.put("message", "Success");
+			}
 		} else {
-			tgl2 = sdf1.parse(request.get("tglPengganti"));
-			tgl2 = sdf2.parse(sdf2.format(tgl2));
-			java.sql.Date tglPengganti = new java.sql.Date(tgl2.getTime());
-			
-			SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
-			Time jamMulai = new Time(sdf3.parse(request.get("jamMulai")).getTime());
-
 			int i = 0;
 			for(JadwalKuliah item : listKuliah) {
 				JadwalPengganti pengganti = new JadwalPengganti();
@@ -88,11 +110,11 @@ public class JadwalPenggantiController {
 				listPengganti.add(pengganti);
 				i++;
 			}
+			penggantiRepository.saveAll(listPengganti);
+			
+			map.put("status", "200");
+			map.put("message", "Success");
 		}
-		penggantiRepository.saveAll(listPengganti);
-		
-		map.put("status", "200");
-		map.put("message", "Success");
 		return map;
 	}
 	
@@ -109,38 +131,57 @@ public class JadwalPenggantiController {
 		
 		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
 		Time jamSkrng = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
-		Time t1 = new Time(sdf3.parse("07:00:00").getTime());
-		Time t2 = new Time(sdf3.parse("18:20:00").getTime());
 		
 		Integer jamKe = jamRepository.getJamKe(jamSkrng);
-		if(jamKe == null) {
-			if(jamSkrng.before(t1)) {
-				jamKe = 1;
-			} else if(jamSkrng.after(t2)) {
-				jamKe = 12;
-			}
-		}
-		
-		List<JadwalPengganti> pengganti = penggantiRepository.getListJadwalByJam(tgl, jamKe);
+		List<JadwalPengganti> pengganti = penggantiRepository.getListJadwalByJam(tgl, jamKe, request.get("kdDosen"));
 		for(JadwalPengganti item : pengganti) {
 			Map map = new LinkedHashMap<>();
-			BeritaAcara berita = beritaRepository.getBeritaAcaraPengganti(tgl, item.getIdPengganti());
-			if(berita == null) {
-				List<Jam> jam = penggantiRepository.getListJam(tgl, item.getJadwalKuliah().getKelas().getKdKelas(),
-						item.getJadwalKuliah().getMatkul().getIdMatkul(), item.getTglKuliah());
+			Map<String, String> mapTgl = new LinkedHashMap<>();
+			Map<String, String> ruangan = new LinkedHashMap<>();
 				
-				map.put("tglKuliah", item.getTglKuliah());
-				map.put("tglPengganti", item.getTglPengganti());
-				map.put("namaMatkul", item.getJadwalKuliah().getMatkul().getNamaMatkul());
-				map.put("jenisMatkul", item.getJadwalKuliah().getMatkul().getJenisMatkul());
-				map.put("jamMulai", jam.get(0).getJamMulai());
-				map.put("jamSelesai", jam.get(jam.size() - 1).getJamSelesai());
-				map.put("kodeRuangan", item.getRuangan().getKdRuangan());
-				maps.add(map);	
-			}
+			List<Jam> jam = penggantiRepository.getListJam(item.getTglPengganti(), item.getJadwalKuliah().getKelas().getKdKelas(),
+					item.getJadwalKuliah().getMatkul().getIdMatkul(), item.getTglKuliah());
+				
+			map.put("namaMatkul", item.getJadwalKuliah().getMatkul().getNamaMatkul());
+			map.put("jenisMatkul", item.getJadwalKuliah().getMatkul().getJenisMatkul());
+			map.put("kodeMatkul", item.getJadwalKuliah().getMatkul().getKdMatkul());
+			map.put("kelas", item.getJadwalKuliah().getKelas().getKdKelas());
+			map.put("jamMulai", jam.get(0).getJamMulai());
+			map.put("jamSelesai", jam.get(jam.size() - 1).getJamSelesai());
+			ruangan.put("kodeRuangan", item.getRuangan().getKdRuangan());
+			ruangan.put("macAddress", item.getRuangan().getMacAddress());
+			map.put("ruangan", ruangan);
+			map.put("jamMulaiOlehDosen", "");
+			mapTgl.put("tglKuliah", sdf1.format(item.getTglKuliah()));
+			mapTgl.put("tglPengganti", sdf1.format(item.getTglPengganti()));
+			map.put("tglJwlPengganti", mapTgl);
+			maps.add(map);
 		}
 		jadwal.put("listJadwal", maps);
 		return jadwal;
+	}
+	
+	@DeleteMapping("/hapusjadwalpengganti")
+	public Map hapusJadwalPengganti(@RequestBody Map<String, String> request) throws ParseException {
+		Map map = new LinkedHashMap<>();
+		Map<String, String> data = new LinkedHashMap<>();
+		
+		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+		java.util.Date tgl2 = sdf1.parse(request.get("tglKuliah"));
+		tgl2 = sdf2.parse(sdf2.format(tgl2));
+		java.sql.Date tgl = new java.sql.Date(tgl2.getTime());
+				
+		List<JadwalPengganti> pengganti = penggantiRepository.getListJadwalByTgl(tgl, request.get("kdKelas"),
+				request.get("namaMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
+		for(JadwalPengganti item : pengganti) {
+			penggantiRepository.delete(item);
+		}
+		
+		map.put("status", "200");
+		map.put("message", "Success");
+		map.put("data", data);
+		return map;
 	}
 	
 	@PostMapping("/dropdownmatkul")
@@ -164,6 +205,9 @@ public class JadwalPenggantiController {
 	public Map<String, List<String>> dropdownJam(@RequestBody Map<String, String> request) throws ParseException {
 		List<String> listJam = new ArrayList<>();
 		Map<String, List<String>> map = new LinkedHashMap<>();
+		List<Jam> jam = new ArrayList<>();
+		List<Integer> idJadwal = new ArrayList<>();
+		List<Integer> idPengganti = new ArrayList<>();
 		
 		LocalDate tgl1 = LocalDate.parse(request.get("tglPengganti"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		String hari = tgl1.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
@@ -173,22 +217,49 @@ public class JadwalPenggantiController {
 		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm");
 		java.util.Date tgl2 = sdf1.parse(request.get("tglPengganti"));
 		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tgl = new java.sql.Date(tgl2.getTime());
+		java.sql.Date tglPengganti = new java.sql.Date(tgl2.getTime());
 		
-		List<Jam> jam = jamRepository.getJam(hari, request.get("kdKelas"), tgl);
-		int jumlah = jadwalRepository.getJumlahJam(request.get("kdKelas"), request.get("namaMatkul"),
+		java.util.Date tgl3 = sdf1.parse(request.get("tglKuliah"));
+		tgl3 = sdf2.parse(sdf2.format(tgl3));
+		java.sql.Date tglKuliah = new java.sql.Date(tgl3.getTime());
+		
+		List<JadwalKuliah> kuliah = jadwalRepository.getListJadwalByKelas(request.get("kdKelas"), request.get("namaMatkul"),
 				Boolean.parseBoolean(request.get("jenisMatkul")));
-		if(jam.size() >= jumlah) {
+		for(JadwalKuliah item : kuliah) {
+			idJadwal.add(item.getIdJadwal());
+		}
+		List<JadwalPengganti> pengganti = penggantiRepository.getListJadwalByTgl(tglKuliah, request.get("kdKelas"),
+				request.get("namaMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
+		if(!tglKuliah.equals(tglPengganti)) {
+			if(pengganti.isEmpty()) {
+				jam = jamRepository.getJamNotEqualsIsEmpty(hari, request.get("kdKelas"), tglPengganti);
+			} else {
+				for(JadwalPengganti item : pengganti) {
+					idPengganti.add(item.getIdPengganti());
+				}
+				jam = jamRepository.getJamNotEqualsNotEmpty(hari, request.get("kdKelas"), tglPengganti, idPengganti);
+			}
+		} else {
+			if(pengganti.isEmpty()) {
+				jam = jamRepository.getJamIsEqualsIsEmpty(hari, request.get("kdKelas"), tglPengganti, idJadwal);
+			} else {
+				for(JadwalPengganti item : pengganti) {
+					idPengganti.add(item.getIdPengganti());
+				}
+				jam = jamRepository.getJamIsEqualsNotEmpty(hari, request.get("kdKelas"), tglPengganti, idPengganti, idJadwal);
+			}
+		}
+		if(jam.size() >= kuliah.size()) {
 			for(int i = 0; i < jam.size(); i++) {
 				int j = 1;
 				boolean b = true;
-				while(j < jumlah && b && jam.size() >= i + jumlah) {
+				while(j < kuliah.size() && b && jam.size() >= i + kuliah.size()) {
 					if(jam.get(i).getJamKe() + j != jam.get(i + j).getJamKe()) {
 						b = false;
 					}
 					j++;
 				}
-				if(b && jam.size() >= i + jumlah) {
+				if(b && jam.size() >= i + kuliah.size()) {
 					listJam.add(sdf3.format(jam.get(i).getJamMulai()));
 				}
 			}
@@ -201,7 +272,10 @@ public class JadwalPenggantiController {
 	@PostMapping("/dropdownruangan")
 	public Map<String, List<String>> dropdownRuangan(@RequestBody Map<String, String> request) throws ParseException {
 		List<Integer> listJam = new ArrayList<>();
-		Map<String, List<String>> map = new LinkedHashMap<>();
+		Map<String, List<String>> map = new LinkedHashMap<>();		
+		List<String> ruangan = new ArrayList<>();
+		List<Integer> idJadwal = new ArrayList<>();
+		List<Integer> idPengganti = new ArrayList<>();
 		
 		LocalDate tgl1 = LocalDate.parse(request.get("tglPengganti"), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 		String hari = tgl1.format(DateTimeFormatter.ofPattern("EEEE", new Locale("in", "ID")));
@@ -210,20 +284,47 @@ public class JadwalPenggantiController {
 		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
 		java.util.Date tgl2 = sdf1.parse(request.get("tglPengganti"));
 		tgl2 = sdf2.parse(sdf2.format(tgl2));
-		java.sql.Date tgl = new java.sql.Date(tgl2.getTime());
+		java.sql.Date tglPengganti = new java.sql.Date(tgl2.getTime());
+		
+		java.util.Date tgl3 = sdf1.parse(request.get("tglKuliah"));
+		tgl3 = sdf2.parse(sdf2.format(tgl3));
+		java.sql.Date tglKuliah = new java.sql.Date(tgl3.getTime());
 		
 		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
 		Time jamMulai = new Time(sdf3.parse(request.get("jamMulai")).getTime());
-		
-		int jumlah = jadwalRepository.getJumlahJam(request.get("kdKelas"), request.get("namaMatkul"),
-				Boolean.parseBoolean(request.get("jenisMatkul")));
-		int jamKe = jamRepository.getJamKe(jamMulai);
 
-		for(int i = 0; i < jumlah; i++) {
+		int jamKe = jamRepository.getJamKe(jamMulai);
+		List<JadwalKuliah> kuliah = jadwalRepository.getListJadwalByKelas(request.get("kdKelas"), request.get("namaMatkul"),
+				Boolean.parseBoolean(request.get("jenisMatkul")));
+		int i = 0;
+		for(JadwalKuliah item : kuliah) {
+			idJadwal.add(item.getIdJadwal());
 			listJam.add(jamKe + i);
+			i++;
+		}
+		List<JadwalPengganti> pengganti = penggantiRepository.getListJadwalByTgl(tglKuliah, request.get("kdKelas"),
+				request.get("namaMatkul"), Boolean.parseBoolean(request.get("jenisMatkul")));
+		if(!tglKuliah.equals(tglPengganti)) {
+			if(pengganti.isEmpty()) {
+				ruangan = ruanganRepository.getKdRuanganNotEqualsIsEmpty(hari, listJam, tglPengganti);
+			} else {
+				for(JadwalPengganti item : pengganti) {
+					idPengganti.add(item.getIdPengganti());
+				}
+				ruangan = ruanganRepository.getKdRuanganNotEqualsNotEmpty(hari, listJam, tglPengganti, idPengganti);
+			}
+		} else {
+			if(pengganti.isEmpty()) {
+				ruangan = ruanganRepository.getKdRuanganIsEqualsIsEmpty(hari, listJam, tglPengganti, idJadwal);
+			} else {
+				for(JadwalPengganti item : pengganti) {
+					idPengganti.add(item.getIdPengganti());
+				}
+				ruangan = ruanganRepository.getKdRuanganIsEqualsNotEmpty(hari, listJam, tglPengganti, idJadwal, idPengganti);
+			}
 		}
 		
-		map.put("ruanganKosong", ruanganRepository.getKdRuangan(hari, listJam, tgl));
+		map.put("ruanganKosong", ruangan);
 		return map;
 	}
 }

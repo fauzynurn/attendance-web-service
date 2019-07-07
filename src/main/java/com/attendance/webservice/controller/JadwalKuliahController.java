@@ -44,7 +44,7 @@ public class JadwalKuliahController {
 	MahasiswaRepository mhsRepository;
 	
 	@PostMapping("/getjadwalmhs")
-	public List<JadwalKuliah> getJadwalMhs(@RequestBody Map<String, String> request) throws ParseException {
+	public Map<String, List<Map>> getJadwalMhs(@RequestBody Map<String, String> request) throws ParseException {
 		List<Map> listKuliah = new ArrayList<>();
 		List<Map> listPengganti = new ArrayList<>();
 		Map<String, List<Map>> jadwal = new LinkedHashMap<>();
@@ -60,118 +60,118 @@ public class JadwalKuliahController {
 		
 		Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
 		List<JadwalKuliah> kuliah = jadwalRepository.getListJadwalMhs(tgl, hari, mhs.getKelas().getKdKelas());
-//		List<JadwalPengganti> pengganti = penggantiRepository.getListJadwalMhs(tgl, mhs.getKelas().getKdKelas());
-//		
-//		for(JadwalKuliah item : kuliah) {
-//			Map map = new LinkedHashMap<>();
-//			List<Map> listJam = new ArrayList<>();
-//			List<String> listDosen = new ArrayList<>();
-//			Map<String, String> ruangan = new LinkedHashMap<>();
-//			
-//			List<Jam> jam = jadwalRepository.getListJam(tgl, hari, mhs.getKelas().getKdKelas(), item.getMatkul().getIdMatkul());
-//			List<Dosen> dosen = jadwalRepository.getListDosen(item.getIdJadwal());
-//			BeritaAcara berita = beritaRepository.getBeritaAcaraKuliah(tgl, item.getIdJadwal());
-//			for(Dosen itemDosen : dosen) {
-//				listDosen.add(itemDosen.getNamaDosen());
-//			}
-//			
-//			map.put("namaMatkul", item.getMatkul().getNamaMatkul());
-//			map.put("jenisMatkul", item.getMatkul().getJenisMatkul());
-//			map.put("kodeMatkul", item.getMatkul().getKdMatkul());
-//			map.put("dosen", listDosen);
-//			map.put("jamMulai", jam.get(0).getJamMulai());
-//			map.put("jamSelesai", jam.get(jam.size() - 1).getJamSelesai());
-//			ruangan.put("kodeRuangan", item.getRuangan().getKdRuangan());
-//			ruangan.put("macAddress", item.getRuangan().getMacAddress());
-//			map.put("ruangan", ruangan);
-//			if(berita != null) {
-//				Time t = new Time(berita.getTglAbsensi().getTime());
-//				map.put("jamMulaiOlehDosen", t);
-//				for(Jam itemJam : jam) {
-//					Map mapJam = new LinkedHashMap<>();
-//					mapJam.put("sesi", itemJam.getJamKe());
-//					mapJam.put("jamMulai", itemJam.getJamMulai());
-//					mapJam.put("jamSelesai", itemJam.getJamSelesai());
-//					Absensi absensi = absensiRepository.getAbsensiKuliah(tgl, itemJam.getJamKe(), request.get("nim"));
-//					if(absensi.getStatusKehadiran() == 1) {
-//						mapJam.put("status", true);						
-//					} else {
-//						mapJam.put("status", false);
-//					}
-//					listJam.add(mapJam);
-//				}
-//			} else {
-//				map.put("jamMulaiOlehDosen", "");
-//				for(Jam itemJam : jam) {
-//					Map mapJam = new LinkedHashMap<>();
-//					mapJam.put("sesi", itemJam.getJamKe());
-//					mapJam.put("jamMulai", itemJam.getJamMulai());
-//					mapJam.put("jamSelesai", itemJam.getJamSelesai());
-//					mapJam.put("status", false);
-//					listJam.add(mapJam);
-//				}
-//			}
-//			map.put("listSesi", listJam);
-//			listKuliah.add(map);
-//		}
-//		
-//		for(JadwalPengganti item : pengganti) {
-//			Map map = new LinkedHashMap<>();
-//			List<Map> listJam = new ArrayList<>();
-//			List<String> listDosen = new ArrayList<>();
-//			Map<String, String> ruangan = new LinkedHashMap<>();
-//			
-//			List<Jam> jam = penggantiRepository.getListJam(tgl, mhs.getKelas().getKdKelas(),
-//					item.getJadwalKuliah().getMatkul().getIdMatkul(), item.getTglKuliah());
-//			List<Dosen> dosen = penggantiRepository.getListDosen(item.getIdPengganti());
-//			BeritaAcara berita = beritaRepository.getBeritaAcaraPengganti(tgl, item.getIdPengganti());
-//			for(Dosen itemDosen : dosen) {
-//				listDosen.add(itemDosen.getNamaDosen());
-//			}
-//			
-//			map.put("namaMatkul", item.getJadwalKuliah().getMatkul().getNamaMatkul());
-//			map.put("jenisMatkul", item.getJadwalKuliah().getMatkul().getJenisMatkul());
-//			map.put("kodeMatkul", item.getJadwalKuliah().getMatkul().getKdMatkul());
-//			map.put("dosen", listDosen);
-//			map.put("jamMulai", jam.get(0).getJamMulai());
-//			map.put("jamSelesai", jam.get(jam.size() - 1).getJamSelesai());
-//			ruangan.put("kodeRuangan", item.getRuangan().getKdRuangan());
-//			ruangan.put("macAddress", item.getRuangan().getMacAddress());
-//			map.put("ruangan", ruangan);
-//			if(berita != null) {
-//				Time t = new Time(berita.getTglAbsensi().getTime());
-//				map.put("jamMulaiOlehDosen", t);
-//				for(Jam itemJam : jam) {
-//					Map mapJam = new LinkedHashMap<>();
-//					mapJam.put("sesi", itemJam.getJamKe());
-//					mapJam.put("jamMulai", itemJam.getJamMulai());
-//					mapJam.put("jamSelesai", itemJam.getJamSelesai());
-//					Absensi absensi = absensiRepository.getAbsensiPengganti(tgl, itemJam.getJamKe(), request.get("nim"));
-//					if(absensi.getStatusKehadiran() == 1) {
-//						mapJam.put("status", true);						
-//					} else {
-//						mapJam.put("status", false);
-//					}
-//					listJam.add(mapJam);
-//				}
-//			} else {
-//				map.put("jamMulaiOlehDosen", "");
-//				for(Jam itemJam : jam) {
-//					Map mapJam = new LinkedHashMap<>();
-//					mapJam.put("sesi", itemJam.getJamKe());
-//					mapJam.put("jamMulai", itemJam.getJamMulai());
-//					mapJam.put("jamSelesai", itemJam.getJamSelesai());
-//					mapJam.put("status", false);
-//					listJam.add(mapJam);
-//				}
-//			}
-//			map.put("listSesi", listJam);
-//			listPengganti.add(map);
-//		}
-//		
-//		jadwal.put("jadwalReguler", listKuliah);
-//		jadwal.put("jadwalPengganti", listPengganti);
-		return kuliah;
+		List<JadwalPengganti> pengganti = penggantiRepository.getListJadwalMhs(tgl, mhs.getKelas().getKdKelas());
+		
+		for(JadwalKuliah item : kuliah) {
+			Map map = new LinkedHashMap<>();
+			List<Map> listJam = new ArrayList<>();
+			List<String> listDosen = new ArrayList<>();
+			Map<String, String> ruangan = new LinkedHashMap<>();
+			
+			List<Jam> jam = jadwalRepository.getListJam(tgl, hari, mhs.getKelas().getKdKelas(), item.getMatkul().getIdMatkul());
+			List<Dosen> dosen = jadwalRepository.getListDosen(item.getIdJadwal());
+			BeritaAcara berita = beritaRepository.getBeritaAcaraKuliah(tgl, item.getIdJadwal());
+			for(Dosen itemDosen : dosen) {
+				listDosen.add(itemDosen.getNamaDosen());
+			}
+			
+			map.put("namaMatkul", item.getMatkul().getNamaMatkul());
+			map.put("jenisMatkul", item.getMatkul().getJenisMatkul());
+			map.put("kodeMatkul", item.getMatkul().getKdMatkul());
+			map.put("dosen", listDosen);
+			map.put("jamMulai", jam.get(0).getJamMulai());
+			map.put("jamSelesai", jam.get(jam.size() - 1).getJamSelesai());
+			ruangan.put("kodeRuangan", item.getRuangan().getKdRuangan());
+			ruangan.put("macAddress", item.getRuangan().getMacAddress());
+			map.put("ruangan", ruangan);
+			if(berita != null) {
+				Time t = new Time(berita.getTglAbsensi().getTime());
+				map.put("jamMulaiOlehDosen", t);
+				for(Jam itemJam : jam) {
+					Map mapJam = new LinkedHashMap<>();
+					mapJam.put("sesi", itemJam.getJamKe());
+					mapJam.put("jamMulai", itemJam.getJamMulai());
+					mapJam.put("jamSelesai", itemJam.getJamSelesai());
+					Absensi absensi = absensiRepository.getAbsensiKuliah(tgl, itemJam.getJamKe(), request.get("nim"));
+					if(absensi.getStatusKehadiran() == 1) {
+						mapJam.put("status", true);						
+					} else {
+						mapJam.put("status", false);
+					}
+					listJam.add(mapJam);
+				}
+			} else {
+				map.put("jamMulaiOlehDosen", "");
+				for(Jam itemJam : jam) {
+					Map mapJam = new LinkedHashMap<>();
+					mapJam.put("sesi", itemJam.getJamKe());
+					mapJam.put("jamMulai", itemJam.getJamMulai());
+					mapJam.put("jamSelesai", itemJam.getJamSelesai());
+					mapJam.put("status", false);
+					listJam.add(mapJam);
+				}
+			}
+			map.put("listSesi", listJam);
+			listKuliah.add(map);
+		}
+		
+		for(JadwalPengganti item : pengganti) {
+			Map map = new LinkedHashMap<>();
+			List<Map> listJam = new ArrayList<>();
+			List<String> listDosen = new ArrayList<>();
+			Map<String, String> ruangan = new LinkedHashMap<>();
+			
+			List<Jam> jam = penggantiRepository.getListJam(tgl, mhs.getKelas().getKdKelas(),
+					item.getJadwalKuliah().getMatkul().getIdMatkul(), item.getTglKuliah());
+			List<Dosen> dosen = penggantiRepository.getListDosen(item.getIdPengganti());
+			BeritaAcara berita = beritaRepository.getBeritaAcaraPengganti(tgl, item.getIdPengganti());
+			for(Dosen itemDosen : dosen) {
+				listDosen.add(itemDosen.getNamaDosen());
+			}
+			
+			map.put("namaMatkul", item.getJadwalKuliah().getMatkul().getNamaMatkul());
+			map.put("jenisMatkul", item.getJadwalKuliah().getMatkul().getJenisMatkul());
+			map.put("kodeMatkul", item.getJadwalKuliah().getMatkul().getKdMatkul());
+			map.put("dosen", listDosen);
+			map.put("jamMulai", jam.get(0).getJamMulai());
+			map.put("jamSelesai", jam.get(jam.size() - 1).getJamSelesai());
+			ruangan.put("kodeRuangan", item.getRuangan().getKdRuangan());
+			ruangan.put("macAddress", item.getRuangan().getMacAddress());
+			map.put("ruangan", ruangan);
+			if(berita != null) {
+				Time t = new Time(berita.getTglAbsensi().getTime());
+				map.put("jamMulaiOlehDosen", t);
+				for(Jam itemJam : jam) {
+					Map mapJam = new LinkedHashMap<>();
+					mapJam.put("sesi", itemJam.getJamKe());
+					mapJam.put("jamMulai", itemJam.getJamMulai());
+					mapJam.put("jamSelesai", itemJam.getJamSelesai());
+					Absensi absensi = absensiRepository.getAbsensiPengganti(tgl, itemJam.getJamKe(), request.get("nim"));
+					if(absensi.getStatusKehadiran() == 1) {
+						mapJam.put("status", true);						
+					} else {
+						mapJam.put("status", false);
+					}
+					listJam.add(mapJam);
+				}
+			} else {
+				map.put("jamMulaiOlehDosen", "");
+				for(Jam itemJam : jam) {
+					Map mapJam = new LinkedHashMap<>();
+					mapJam.put("sesi", itemJam.getJamKe());
+					mapJam.put("jamMulai", itemJam.getJamMulai());
+					mapJam.put("jamSelesai", itemJam.getJamSelesai());
+					mapJam.put("status", false);
+					listJam.add(mapJam);
+				}
+			}
+			map.put("listSesi", listJam);
+			listPengganti.add(map);
+		}
+		
+		jadwal.put("jadwalReguler", listKuliah);
+		jadwal.put("jadwalPengganti", listPengganti);
+		return jadwal;
 	}
 	
 	@PostMapping("/getjadwaldosen")

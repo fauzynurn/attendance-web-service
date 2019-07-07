@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,7 +69,7 @@ public class DosenController {
 	@CrossOrigin
 	@GetMapping("/getdaftardosen")
 	public List<Dosen> getDaftarDosen() {
-        return dosenRepository.findAll();
+        return dosenRepository.findAll(Sort.by(Sort.Direction.ASC, "kdDosen"));
 	}
 	
 	@PostMapping("/buatdosen")
