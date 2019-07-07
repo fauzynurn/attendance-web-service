@@ -11,7 +11,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -86,16 +85,19 @@ public class AbsensiController {
 		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
 		
 		Integer jamKe = jamRepository.getJamKe(jam);
-		Map<String, String> map = absensiRepository.getRekapKetidakhadiran(request.get("nim"), tgl, jamKe);
-		if(map.get("sakit") == null && map.get("izin") == null && map.get("alpa") == null) {
-			map.put("sakit", "0");
-			map.put("izin", "0");
-			map.put("alpa", "0");
+		Map<String, String> map1 = absensiRepository.getRekapKetidakhadiran(request.get("nim"), tgl, jamKe);
+		if(map1.get("sakit") == null && map1.get("izin") == null && map1.get("alpa") == null) {
+			Map<String, String> map2 = new LinkedHashMap<>();
+			map2.put("sakit", "0");
+			map2.put("izin", "0");
+			map2.put("alpa", "0");
+			return map2;
+		} else {
+			return map1;	
 		}
-		return map;
 	}
 	
-	@PutMapping("/catatkehadiran")
+	@PostMapping("/catatkehadiran")
 	public Map<String, String> catatKehadiran(@RequestBody Map<String, List<Map<String, String>>> request) throws ParseException {
 		Map<String, String> map = new LinkedHashMap<>();
 		List<Map<String, String>> listRequest = request.get("listKehadiran");
@@ -241,7 +243,7 @@ public class AbsensiController {
 	}
 	
 	@CrossOrigin
-	@PutMapping("/ubahkehadiran")
+	@PostMapping("/ubahkehadiran")
 	public Map<String, String> ubahKehadiran(@RequestBody Map<String, String> request) throws ParseException {
 		Map<String, String> map = new LinkedHashMap<>();
 		
@@ -275,17 +277,5 @@ public class AbsensiController {
 		map.put("status", "200");
 		map.put("message", "Success");
 		return map;
-	}
-	
-	@CrossOrigin
-	@PostMapping("/dropdownjamke")
-	public List<Integer> dropdownJamKe(@RequestBody Map<String, String> request) throws ParseException {
-		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
-		tgl1 = sdf2.parse(sdf2.format(tgl1));
-		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
-		
-		return absensiRepository.getListJamKe(tgl, request.get("kdKelas"));
 	}
 }

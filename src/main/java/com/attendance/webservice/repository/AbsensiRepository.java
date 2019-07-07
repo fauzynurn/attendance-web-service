@@ -49,17 +49,6 @@ public interface AbsensiRepository extends JpaRepository<Absensi, Serializable> 
 			"ORDER BY a.mhs.nim ASC")
 	List<Absensi> getListAbsensiByKelasPengganti(Date tgl, int jamKe, String kdKelas);
 	
-	@Query("SELECT CASE WHEN a.beritaAcara.jadwalPengganti.idPengganti != null THEN jp.jam.jamKe ELSE jk.jam.jamKe END AS jamKe " +
-			"FROM Absensi a " +
-			"LEFT JOIN a.beritaAcara.jadwalPengganti jp " +
-			"INNER JOIN JadwalKuliah jk ON jk.idJadwal = a.beritaAcara.jadwalKuliah.idJadwal " +
-			"OR jk.idJadwal = jp.jadwalKuliah.idJadwal " +
-			"INNER JOIN Jam j ON j.jamKe = jk.jam.jamKe OR j.jamKe = jp.jam.jamKe " +
-			"WHERE DATE(a.beritaAcara.tglAbsensi) = ?1 AND a.mhs.kelas.kdKelas = ?2 " +
-			"GROUP BY CASE WHEN a.beritaAcara.jadwalPengganti.idPengganti != null THEN jp.jam.jamKe ELSE jk.jam.jamKe END " +
-			"ORDER BY CASE WHEN a.beritaAcara.jadwalPengganti.idPengganti != null THEN jp.jam.jamKe ELSE jk.jam.jamKe END ASC")
-	List<Integer> getListJamKe(Date tgl, String kdKelas);
-	
 	@Query("SELECT jk.matkul.namaMatkul AS namaMatkul, jk.matkul.jenisMatkul AS jenisMatkul, " +
 			"CAST(SUM(CASE WHEN a.statusKehadiran = 1 THEN 1 ELSE 0 END) AS char) AS jumlahHadir, " +
 			"CAST(SUM(CASE WHEN a.statusKehadiran != 1 THEN 1 ELSE 0 END) AS char) AS jumlahTdkHadir " +

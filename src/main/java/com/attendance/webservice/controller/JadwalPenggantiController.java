@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.attendance.webservice.model.BeritaAcara;
 import com.attendance.webservice.model.JadwalKuliah;
 import com.attendance.webservice.model.JadwalPengganti;
 import com.attendance.webservice.model.Jam;
