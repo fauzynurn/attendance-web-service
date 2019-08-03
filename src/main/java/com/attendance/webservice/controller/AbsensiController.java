@@ -11,11 +11,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.webservice.model.Absensi;
-import com.attendance.webservice.model.Mahasiswa;
 import com.attendance.webservice.repository.AbsensiRepository;
 import com.attendance.webservice.repository.JadwalKuliahRepository;
 import com.attendance.webservice.repository.JadwalPenggantiRepository;
@@ -35,43 +35,43 @@ public class AbsensiController {
 	@Autowired
 	MahasiswaRepository mhsRepository;
 	
-	@PostMapping("/getdetailrekap")
-	public List<Map> getDetailRekap(@RequestBody Map<String, String> request) throws ParseException {
-		List<Map> maps = new ArrayList<>();
-		
-		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
-		tgl1 = sdf2.parse(sdf2.format(tgl1));
-		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
-		
-		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
-		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
-		
-		Integer jamKe = jamRepository.getJamKe(jam);
-		Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
-		List<Map> maps1 = jadwalRepository.getListJadwalByKelas(mhs.getKelas().getKdKelas());
-		List<Map> maps2 = absensiRepository.getRekapKehadiran(request.get("nim"), tgl, jamKe);
-		for(Map item1 : maps1) {
-			Map map = new LinkedHashMap<>();
-				
-			map.put("namaMatkul", item1.get("namaMatkul"));
-			map.put("jenisMatkul", item1.get("jenisMatkul"));
-			map.put("jumlahHadir", item1.get("jumlahHadir"));
-			map.put("jumlahTdkHadir", item1.get("jumlahTdkHadir"));
-			if(!maps2.isEmpty()) {
-				for(Map item2 : maps2) {
-					if(item1.get("namaMatkul").toString().equals((item2.get("namaMatkul").toString())) 
-							&& (boolean) item1.get("jenisMatkul") == (boolean) item2.get("jenisMatkul")) {
-						map.put("jumlahHadir", item2.get("jumlahHadir"));
-						map.put("jumlahTdkHadir", item2.get("jumlahTdkHadir"));	
-					}
-				}
-			}
-			maps.add(map);
-		}
-		return maps;
-	}
+//	@PostMapping("/getdetailrekap")
+//	public List<Map> getDetailRekap(@RequestBody Map<String, String> request) throws ParseException {
+//		List<Map> maps = new ArrayList<>();
+//		
+//		SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+//		SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+//		java.util.Date tgl1 = sdf1.parse(request.get("tgl"));
+//		tgl1 = sdf2.parse(sdf2.format(tgl1));
+//		java.sql.Date tgl = new java.sql.Date(tgl1.getTime());
+//		
+//		SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
+//		Time jam = new Time(sdf3.parse(request.get("jamSkrng")).getTime());
+//		
+//		Integer jamKe = jamRepository.getJamKe(jam);
+//		Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
+//		List<Map> maps1 = jadwalRepository.getListJadwalByKelas(mhs.getKelas().getKdKelas());
+//		List<Map> maps2 = absensiRepository.getRekapKehadiran(request.get("nim"), tgl, jamKe);
+//		for(Map item1 : maps1) {
+//			Map map = new LinkedHashMap<>();
+//				
+//			map.put("namaMatkul", item1.get("namaMatkul"));
+//			map.put("jenisMatkul", item1.get("jenisMatkul"));
+//			map.put("jumlahHadir", item1.get("jumlahHadir"));
+//			map.put("jumlahTdkHadir", item1.get("jumlahTdkHadir"));
+//			if(!maps2.isEmpty()) {
+//				for(Map item2 : maps2) {
+//					if(item1.get("namaMatkul").toString().equals((item2.get("namaMatkul").toString())) 
+//							&& (boolean) item1.get("jenisMatkul") == (boolean) item2.get("jenisMatkul")) {
+//						map.put("jumlahHadir", item2.get("jumlahHadir"));
+//						map.put("jumlahTdkHadir", item2.get("jumlahTdkHadir"));	
+//					}
+//				}
+//			}
+//			maps.add(map);
+//		}
+//		return maps;
+//	}
 	
 	@PostMapping("/getrekapketidakhadiran")
 	public Map<String, String> getRekapKetidakhadiran(@RequestBody Map<String, String> request) throws ParseException {
@@ -243,7 +243,7 @@ public class AbsensiController {
 	}
 	
 	@CrossOrigin
-	@PostMapping("/ubahkehadiran")
+	@PutMapping("/ubahkehadiran")
 	public Map<String, String> ubahKehadiran(@RequestBody Map<String, String> request) throws ParseException {
 		Map<String, String> map = new LinkedHashMap<>();
 		
@@ -277,5 +277,11 @@ public class AbsensiController {
 		map.put("status", "200");
 		map.put("message", "Success");
 		return map;
+	}
+	
+	@CrossOrigin
+	@PostMapping("/getrekapkelas")
+	public List<Map<String, String>> getRekapKelas(@RequestBody Map<String, String> request) throws ParseException {
+		return absensiRepository.getRekapByKelas(request.get("kdKelas"));
 	}
 }

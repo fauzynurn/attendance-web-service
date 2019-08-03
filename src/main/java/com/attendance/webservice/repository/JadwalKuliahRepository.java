@@ -7,12 +7,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.attendance.webservice.model.Dosen;
 import com.attendance.webservice.model.JadwalKuliah;
 import com.attendance.webservice.model.Jam;
+import com.attendance.webservice.model.Matakuliah;
 
 @Repository("JadwalKuliahRepository")
 public interface JadwalKuliahRepository extends JpaRepository<JadwalKuliah, Serializable> {
@@ -99,4 +103,20 @@ public interface JadwalKuliahRepository extends JpaRepository<JadwalKuliah, Seri
 			"WHERE jk.hari = ?1 AND jk.kelas.kdKelas = ?2 " +
 			"ORDER BY jk.jam.jamKe ASC")
 	List<JadwalKuliah> getListJadwalByHari(String hari, String kdKelas);
+	
+//	@Query("SELECT jk " +
+//			"FROM JadwalKuliah jk " +
+//			"WHERE jk.hari = ?1 AND jk.kelas.kdKelas = ?2 AND jk.jam.jamKe = ?3")
+//	JadwalKuliah findByJamKe(String hari, String kdKelas, int jamKe);
+//	
+//	@Query("SELECT mk " +
+//			"FROM Matakuliah mk " +
+//			"WHERE mk.kdMatkul = ?1 AND mk.jenisMatkul = ?2")
+//	Matakuliah findMatkul(String kdMatkul, boolean jenisMatkul);
+//	
+//	@Transactional
+//	@Modifying
+//	@Query(value = "insert into matakuliah (KODE_MATKUL, JENIS_MATKUL, NAMA_MATKUL) values (:KODE_MATKUL, :JENIS_MATKUL, :NAMA_MATKUL)",
+//		nativeQuery = true)
+//	void insertMatkul(@Param("KODE_MATKUL") String kdMatkul, @Param("JENIS_MATKUL") boolean jenisMatkul, @Param("NAMA_MATKUL") String namaMatkul);
 }

@@ -28,12 +28,6 @@ public class BeritaAcara {
 	@Column(name = "TGL_ABSENSI")
 	private Timestamp tglAbsensi;
 	
-	@Column(name = "PARAF_DOSEN_WALI")
-	private boolean parafDosenWali;
-
-	@Column(name = "PARAF_KAPROD")
-	private boolean parafKaprod;
-	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_JADWAL")
 	@Fetch(FetchMode.JOIN)
@@ -51,12 +45,9 @@ public class BeritaAcara {
 		
 	}
 	
-	public BeritaAcara(Timestamp tglAbsensi, boolean parafDosenWali, boolean parafKaprod, JadwalKuliah jadwalKuliah,
-			JadwalPengganti jadwalPengganti) {
+	public BeritaAcara(Timestamp tglAbsensi, JadwalKuliah jadwalKuliah, JadwalPengganti jadwalPengganti) {
 		super();
 		this.tglAbsensi = tglAbsensi;
-		this.parafDosenWali = parafDosenWali;
-		this.parafKaprod = parafKaprod;
 		this.jadwalKuliah = jadwalKuliah;
 		this.jadwalPengganti = jadwalPengganti;
 	}
@@ -75,22 +66,6 @@ public class BeritaAcara {
 	
 	public void setTglAbsensi(Timestamp tglAbsensi) {
 		this.tglAbsensi = tglAbsensi;
-	}
-	
-	public boolean getParafDosenWali() {
-		return parafDosenWali;
-	}
-	
-	public void setParafDosenWali(boolean parafDosenWali) {
-		this.parafDosenWali = parafDosenWali;
-	}
-	
-	public boolean getParafKaprod() {
-		return parafKaprod;
-	}
-	
-	public void setParafKaprod(boolean parafKaprod) {
-		this.parafKaprod = parafKaprod;
 	}
 	
 	public JadwalKuliah getJadwalKuliah() {

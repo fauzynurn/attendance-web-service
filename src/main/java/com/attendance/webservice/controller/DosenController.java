@@ -1,5 +1,7 @@
 package com.attendance.webservice.controller;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,6 @@ public class DosenController {
     		if(dosen.getImeiDosen() != null) {
     			if(dosen.getImeiDosen().equals(request.get("imei"))) {
     				data.put("nama", dosen.getNamaDosen());
-    				
 					map.put("status", "200");
 					map.put("message", "Imei match");
 					map.put("data", data);
@@ -59,7 +60,6 @@ public class DosenController {
         dosenRepository.save(dosen);
         
 		data.put("nama", dosen.getNamaDosen());
-		
 		map.put("status", "200");
 		map.put("message", "Success");
 		map.put("data", data);
@@ -72,23 +72,58 @@ public class DosenController {
         return dosenRepository.findAll(Sort.by(Sort.Direction.ASC, "kdDosen"));
 	}
 	
-	@PostMapping("/buatdosen")
-	public Map<String, String> buatDosen(@RequestBody Map<String, String> request) {
+	@CrossOrigin
+	@PostMapping("/resetdosen")
+	public Map<String, String> resetDosen(@RequestBody Map<String, String> request) throws ParseException {
 		Map<String, String> map = new LinkedHashMap<>();
-		Dosen dosen = new Dosen();
+		Dosen dosen = dosenRepository.findByKdDosen(request.get("kdDosen"));
 		
-		if(dosenRepository.findByKdDosen(request.get("kdDosen")) == null) {
-			dosen.setKdDosen(request.get("kdDosen"));
-			dosen.setNamaDosen(request.get("namaDosen"));
-			dosen.setPasswordDosen(request.get("passwordDosen"));
-			dosenRepository.save(dosen);
+		dosen.setImeiDosen(null);
+		dosenRepository.save(dosen);
+		
+		map.put("status", "200");
+		map.put("message", "Success");
+        return map;
+	}
+	
+	@CrossOrigin
+	@PostMapping("/importdosen")
+	public Map<String, String> importDosen(@RequestBody Map<String, List<Map<String, String>>> request) {
+		Map<String, String> map = new LinkedHashMap<>();
+		List<Dosen> listDosen1 = new ArrayList<>();
+		List<Dosen> listDosen2 = new ArrayList<>();
+		List<Map<String, String>> listRequest = request.get("listDosen");
+		
+		for(Map<String, String> r : listRequest) {
+			Dosen dosen = dosenRepository.findByKdDosen(r.get("kdDosen"));
+			if(dosen == null) {
+				Dosen dsn = new Dosen();
+				dsn.setKdDosen(r.get("kdDosen"));
+				dsn.setNamaDosen(r.get("namaDosen"));
+				listDosen1.add(dsn);
+			} else {
+				dosen.setNamaDosen(r.get("namaDosen"));
+				listDosen2.add(dosen);
+			}				
+		}
+
+		try {
+			if(!listDosen1.isEmpty()) {
+				for(Dosen item : listDosen1) {
+					dosenRepository.insertDosen(item.getKdDosen(), item.getNamaDosen(), null);	
+				}
+			}
+				
+			if(!listDosen2.isEmpty()) {
+				dosenRepository.saveAll(listDosen2);	
+			}
 			
 			map.put("status", "200");
 			map.put("message", "Success");
-		} else {
+		} catch(Exception e) {
 			map.put("status", "404");
-			map.put("message", "Failed");
+			map.put("message", "Import Fail");
 		}
-        return map;
+		return map;
 	}
 }

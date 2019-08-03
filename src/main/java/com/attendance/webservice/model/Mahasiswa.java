@@ -20,7 +20,7 @@ import org.hibernate.annotations.FetchMode;
 @Table(name = "mahasiswa")
 public class Mahasiswa {
 	@Id
-	@Column(name = "NIM")
+	@Column(name = "NIM", nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String nim;
 	

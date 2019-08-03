@@ -4,14 +4,12 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -24,18 +22,9 @@ public class Dosen {
 	
 	@Column(name = "NAMA_DOSEN")
 	private String namaDosen;
-	
-	@Column(name = "PASSWORD_DOSEN")
-	private String passwordDosen;
 
 	@Column(name = "IMEI_DOSEN")
 	private String imeiDosen;
-	
-	@OneToMany(targetEntity = Kelas.class, mappedBy = "dosen1", orphanRemoval = false, fetch = FetchType.LAZY)
-	private Set<Kelas> kelas1;
-	
-	@OneToMany(targetEntity = Kelas.class, mappedBy = "dosen2", orphanRemoval = false, fetch = FetchType.LAZY)
-	private Set<Kelas> kelas2;
 	
 	@ManyToMany
 	@JoinTable(
@@ -48,11 +37,10 @@ public class Dosen {
 		
 	}
 	
-	public Dosen(String kdDosen, String namaDosen, String passwordDosen, String imeiDosen) {
+	public Dosen(String kdDosen, String namaDosen, String imeiDosen) {
 		super();
 		this.kdDosen = kdDosen;
 		this.namaDosen = namaDosen;
-		this.passwordDosen = passwordDosen;
 		this.imeiDosen = imeiDosen;
 	}
 	
@@ -70,14 +58,6 @@ public class Dosen {
 		
 	public void setNamaDosen(String namaDosen) {
 		this.namaDosen = namaDosen;
-	}
-	
-	public String getPasswordDosen() {
-		return passwordDosen;
-	}
-	
-	public void setPasswordDosen(String passwordDosen) {
-		this.passwordDosen = passwordDosen;
 	}
 	
 	public String getImeiDosen() {

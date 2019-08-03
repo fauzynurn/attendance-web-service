@@ -5,13 +5,24 @@ import java.sql.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.attendance.webservice.model.Ruangan;
 
 @Repository("RuanganRepository")
 public interface RuanganRepository extends JpaRepository<Ruangan, Serializable> {
+	Ruangan findByKdRuangan(String kdRuangan);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "insert into ruangan (KODE_RUANGAN, MAC_ADDRESS) values (:KODE_RUANGAN, :MAC_ADDRESS)",
+		nativeQuery = true)
+	void insertRuangan(@Param("KODE_RUANGAN") String kdRuangan, @Param("MAC_ADDRESS") String macAddress);
+	
 	@Query("SELECT r.kdRuangan " +
 			"FROM Ruangan r LEFT JOIN r.jadwalKuliah jk ON jk.hari = ?1 AND jk.jam.jamKe IN(?2) LEFT JOIN jk.jadwalPengganti jp " +
 			"ON jp.tglKuliah = ?3 " +

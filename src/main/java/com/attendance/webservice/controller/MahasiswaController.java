@@ -1,5 +1,6 @@
 package com.attendance.webservice.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +35,6 @@ public class MahasiswaController {
     			if(mhs.getImeiMhs().equals(request.get("imei"))) {
     				data.put("nama", mhs.getNamaMhs());
     				data.put("kelas", mhs.getKelas().getKdKelas());
-    				
 					map.put("status", "200");
 					map.put("message", "Imei match");
 					map.put("data", data);
@@ -61,7 +61,6 @@ public class MahasiswaController {
         
 		data.put("nama", mhs.getNamaMhs());
 		data.put("kelas", mhs.getKelas().getKdKelas());
-		
 		map.put("status", "200");
 		map.put("message", "Success");
 		map.put("data", data);
@@ -80,32 +79,71 @@ public class MahasiswaController {
 			map.put("nim", item.getNim());
 			map.put("nama", item.getNamaMhs());
 			map.put("imei", item.getImeiMhs());
-			
 			maps.add(map);
 		}
         return maps;
 	}
 	
 	@CrossOrigin
-	@PostMapping("/buatmhs")
-	public Map<String, String> buatMhs(@RequestBody Map<String, String> request) {
+	@PostMapping("/resetmhs")
+	public Map<String, String> resetMhs(@RequestBody Map<String, String> request) throws ParseException {
 		Map<String, String> map = new LinkedHashMap<>();
-		Mahasiswa mhs = new Mahasiswa();
-		Kelas kelas = new Kelas();
+		Mahasiswa mhs = mhsRepository.findByNim(request.get("nim"));
 		
-		if(mhsRepository.findByNim(request.get("nim")) == null) {
-			kelas.setKdKelas(request.get("kdKelas"));
-			mhs.setNamaMhs(request.get("namaMhs"));
-			mhs.setNim(request.get("nim"));
-			mhs.setKelas(kelas);
-			mhsRepository.save(mhs);
+		mhs.setImeiMhs(null);
+		mhsRepository.save(mhs);
 		
+		map.put("status", "200");
+		map.put("message", "Success");
+        return map;
+	}
+	
+	@CrossOrigin
+	@PostMapping("/importmhs")
+	public Map<String, String> importMhs(@RequestBody Map<String, List<Map<String, String>>> request) {
+		Map<String, String> map = new LinkedHashMap<>();
+		List<Mahasiswa> listMhs1 = new ArrayList<>();
+		List<Mahasiswa> listMhs2 = new ArrayList<>();
+		List<Map<String, String>> listRequest = request.get("listMhs");
+		
+		for(Map<String, String> r : listRequest) {
+			Mahasiswa mahasiswa = mhsRepository.findByNim(r.get("nim"));
+			if(mahasiswa == null) {
+				Mahasiswa mhs = new Mahasiswa();
+				Kelas kelas = new Kelas();
+				kelas.setKdKelas(r.get("kdKelas"));
+				
+				mhs.setNim(r.get("nim"));
+				mhs.setNamaMhs(r.get("namaMhs"));
+				mhs.setKelas(kelas);
+				listMhs1.add(mhs);
+			} else {
+				Kelas kelas = new Kelas();
+				kelas.setKdKelas(r.get("kdKelas"));
+				
+				mahasiswa.setNamaMhs(r.get("namaMhs"));
+				mahasiswa.setKelas(kelas);
+				listMhs2.add(mahasiswa);
+			}				
+		}
+
+		try {
+			if(!listMhs1.isEmpty()) {
+				for(Mahasiswa item : listMhs1) {
+					mhsRepository.insertMhs(item.getNim(), item.getNamaMhs(), item.getKelas().getKdKelas(), null);
+				}
+			}
+				
+			if(!listMhs2.isEmpty()) {
+				mhsRepository.saveAll(listMhs2);	
+			}
+			
 			map.put("status", "200");
 			map.put("message", "Success");
-		} else {
+		} catch(Exception e) {
 			map.put("status", "404");
-			map.put("message", "Failed");
+			map.put("message", "Import Fail");
 		}
-        return map;
+		return map;
 	}
 }

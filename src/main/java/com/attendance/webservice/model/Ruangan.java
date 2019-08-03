@@ -19,9 +19,6 @@ public class Ruangan {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private String kdRuangan;
 	
-	@Column(name = "NAMA_RUANGAN")
-	private String namaRuangan;
-	
 	@Column(name = "MAC_ADDRESS")
 	private String macAddress;
 	
@@ -35,10 +32,9 @@ public class Ruangan {
 		
 	}
 	
-	public Ruangan(String kdRuangan, String namaRuangan, String macAddress) {
+	public Ruangan(String kdRuangan, String macAddress) {
 		super();
 		this.kdRuangan = kdRuangan;
-		this.namaRuangan = namaRuangan;
 		this.macAddress = macAddress;
 	}
 	
@@ -48,14 +44,6 @@ public class Ruangan {
 	
 	public void setKdRuangan(String kdRuangan) {
 		this.kdRuangan = kdRuangan;
-	}
-	
-	public String getNamaRuangan() {
-		return namaRuangan;
-	}
-	
-	public void setNamaRuangan(String namaRuangan) {
-		this.namaRuangan = namaRuangan;
 	}
 	
 	public String getMacAddress() {

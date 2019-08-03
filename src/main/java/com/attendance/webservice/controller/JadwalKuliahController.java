@@ -287,4 +287,77 @@ public class JadwalKuliahController {
 		}
 		return maps;
 	}
+	
+//	@CrossOrigin
+//	@PostMapping("/importjadwal")
+//	public Map<String, String> importJadwal(@RequestBody Map<String, List<Map<String, String>>> request) {
+//		Map<String, String> map = new LinkedHashMap<>();
+//		List<String> listJamKe = new ArrayList<>();
+//		List<JadwalKuliah> listJadwal1 = new ArrayList<>();
+//		List<JadwalKuliah> listJadwal2 = new ArrayList<>();
+//		List<Map<String, String>> listRequest = request.get("listJadwal");
+//		
+//		for(Map<String, String> r : listRequest) {
+//			JadwalKuliah jadwal = jadwalRepository.findByJamKe(r.get("hari"), r.get("kdKelas"), Integer.parseInt(r.get("jamKe")));
+//			if(jadwal == null) {
+//				JadwalKuliah jdwl = new JadwalKuliah();
+//				Jam jam = new Jam();
+//				Kelas kelas = new Kelas();
+//				Matakuliah matkul = new Matakuliah();
+//				Ruangan ruangan = new Ruangan();
+//				jam.setJamKe(Integer.parseInt(r.get("jamKe")));
+//				kelas.setKdKelas(r.get("kdKelas"));
+//				ruangan.setKdRuangan(r.get("kdRuangan"));
+//				matkul = jadwalRepository.findMatkul(r.get("kdMatkul"), Boolean.parseBoolean(r.get("jenisMatkul")));
+//				if(matkul == null) {					
+//					jadwalRepository.insertMatkul(r.get("kdMatkul"), Boolean.parseBoolean(r.get("jenisMatkul")), r.get("namaMatkul"));
+//					matkul = jadwalRepository.findMatkul(r.get("kdMatkul"), Boolean.parseBoolean(r.get("jenisMatkul")));
+//				}
+//				
+//				jdwl.setHari(r.get("hari"));
+//				jdwl.setJam(jam);
+//				jdwl.setKelas(kelas);
+//				jdwl.setMatkul(matkul);
+//				jdwl.setRuangan(ruangan);
+//				listJadwal1.add(jdwl);
+//			} else {
+//				Matakuliah matkul = new Matakuliah();
+//				Ruangan ruangan = new Ruangan();
+//				ruangan.setKdRuangan(r.get("kdRuangan"));
+//				matkul = jadwalRepository.findMatkul(r.get("kdMatkul"), Boolean.parseBoolean(r.get("jenisMatkul")));
+//				if(matkul == null) {
+//					jadwalRepository.insertMatkul(r.get("kdMatkul"), Boolean.parseBoolean(r.get("jenisMatkul")), r.get("namaMatkul"));
+//					matkul = jadwalRepository.findMatkul(r.get("kdMatkul"), Boolean.parseBoolean(r.get("jenisMatkul")));
+//				}
+//				
+//				jadwal.setMatkul(matkul);
+//				jadwal.setRuangan(ruangan);
+//				listJadwal2.add(jadwal);
+//			}
+//			listJamKe.add(r.get("jamKe"));
+//		}
+//
+//		try {
+//			if(!listKdDosen.isEmpty()) {
+//				dosenRepository.deleteAll(dosenRepository.getDosenNotIn(listKdDosen));
+//			}
+//			
+//			if(!listDosen1.isEmpty()) {
+//				for(Dosen item : listDosen1) {
+//					dosenRepository.insertDosen(item.getKdDosen(), item.getNamaDosen(), null);	
+//				}
+//			}
+//				
+//			if(!listDosen2.isEmpty()) {
+//				dosenRepository.saveAll(listDosen2);	
+//			}
+//			
+//			map.put("status", "200");
+//			map.put("message", "Success");
+//		} catch(Exception e) {
+//			map.put("status", "404");
+//			map.put("message", "Import Fail");
+//		}
+//		return map;
+//	}
 }
